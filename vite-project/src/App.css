@@ -1,0 +1,108 @@
+/* src/App.css */
+
+/* --- THE VITE RESET --- */
+#root {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  text-align: left !important;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@700&display=swap');
+
+:root {
+  --primary-color: #d4a373; /* Gold Tone */
+  --dark-overlay: rgba(0, 0, 0, 0.6);
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  line-height: 1.7;
+  color: #333;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, .navbar-brand {
+  font-family: 'Playfair Display', serif;
+}
+
+.text-gold {
+  color: var(--primary-color) !important;
+}
+
+.section-padding {
+  padding: 100px 0;
+}
+
+/* Navbar Styling */
+.navbar {
+  background-color: #000 !important;
+  padding: 15px 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  color: #fff !important;
+}
+
+.nav-link {
+  font-weight: 500;
+  margin-left: 15px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.8) !important;
+}
+
+.nav-link:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(var(--dark-overlay), var(--dark-overlay)), 
+              url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Portfolio Grid */
+.gallery-img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.gallery-img:hover {
+  transform: scale(1.03);
+  filter: brightness(0.8);
+}
+
+/* Form Styling */
+.form-control {
+  border-radius: 0;
+  padding: 12px;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  border-radius: 30px;
+}
+
+.btn-primary:hover {
+  background-color: #b08d55;
+  border-color: #b08d55;
+}
