@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-
+import PropTypes from 'prop-types';
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      role: 'user'
+      role: 'user',
+      email: '',      // Added state to store input
+      password: '',   // Added state to store input
+      error: ''       // To show error messages
     };
   }
 
@@ -12,8 +15,31 @@ class Login extends Component {
     this.setState({ role: newRole });
   }
 
+  // Updates state whenever user types
+  handleChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value, error: '' });
+  }
+
+  // The "Hard Coded" Login Logic
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const { email, password } = this.state;
+
+    // HARD CODED CREDENTIALS
+    // You can change these strings to whatever you want to test with
+    const validEmail = "user@test.com";
+    const validPass = "123456";
+
+    if (email === validEmail && password === validPass) {
+      alert("Login Successful!");
+      this.props.onBack(); // Navigate back to Home/Landing on success
+    } else {
+      this.setState({ error: "Invalid credentials! Try user@test.com / 123456" });
+    }
+  }
+
   render() {
-    const { role } = this.state;
+    const { role, email, password, error } = this.state;
     const { onBack, onRegisterClick } = this.props;
 
     return (
@@ -25,6 +51,8 @@ class Login extends Component {
                 <div className="card-body p-5">
                   <div className="text-center mb-4">
                     <h3 className="fw-bold mb-3">{role === 'user' ? 'Client Login' : 'Admin Portal'}</h3>
+                    
+                    {/* Role Toggles */}
                     <div className="btn-group w-100" role="group">
                       <button 
                         className={`btn ${role === 'user' ? 'btn-primary' : 'btn-outline-primary'}`}
@@ -37,16 +65,35 @@ class Login extends Component {
                     </div>
                   </div>
                   
-                  <form onSubmit={(e) => e.preventDefault()}>
+                  {/* Error Message Display */}
+                  {error && <div className="alert alert-danger text-center p-2 small">{error}</div>}
+
+                  <form onSubmit={this.handleSubmit}>
                     <div className="mb-3">
                       <label className="form-label small fw-bold">Email Address</label>
-                      <input type="email" className="form-control" placeholder="name@example.com" />
+                      <input 
+                        type="email" 
+                        name="email"
+                        className="form-control" 
+                        placeholder="user@test.com"
+                        value={email}
+                        onChange={this.handleChange}
+                        required
+                      />
                     </div>
                     <div className="mb-4">
                       <label className="form-label small fw-bold">Password</label>
-                      <input type="password" className="form-control" placeholder="********" />
+                      <input 
+                        type="password" 
+                        name="password"
+                        className="form-control" 
+                        placeholder="123456"
+                        value={password}
+                        onChange={this.handleChange}
+                        required
+                      />
                     </div>
-                    <button className={`btn w-100 mb-3 ${role === 'user' ? 'btn-primary' : 'btn-dark'}`}>
+                    <button type="submit" className={`btn w-100 mb-3 ${role === 'user' ? 'btn-primary' : 'btn-dark'}`}>
                       Login
                     </button>
                   </form>
@@ -69,5 +116,8 @@ class Login extends Component {
     );
   }
 }
-
+Login.propTypes = {
+  onBack: PropTypes.func.isRequired,
+  onRegisterClick: PropTypes.func.isRequired
+};
 export default Login;

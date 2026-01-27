@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import PropTypes from 'prop-types';
 // Data Arrays
 const servicesData = [
   { icon: "fas fa-camera", title: "Portrait Photography", desc: "Professional headshots, family portraits, and creative modeling shoots." },
@@ -107,6 +107,75 @@ class Landing extends Component {
           </div>
         </section>
 
+        {/* --- START OF NEW CONTACT SECTION --- */}
+        <section id="contact" className="section-padding bg-light">
+          <div className="container">
+            <div className="text-center mb-5">
+              <h6 className="text-gold fw-bold text-uppercase">Get In Touch</h6>
+              <h2>Contact Me</h2>
+            </div>
+
+            <div className="row justify-content-center">
+              {/* Contact Info Column */}
+              <div className="col-lg-4 mb-4 mb-lg-0">
+                <div className="d-flex align-items-center mb-4">
+                  <div className="bg-white p-3 rounded-circle shadow-sm text-gold me-3">
+                    <i className="fas fa-envelope fa-lg"></i>
+                  </div>
+                  <div>
+                    <h5 className="mb-1">Email</h5>
+                    <p className="mb-0 text-muted small">hello@luminalens.com</p>
+                  </div>
+                </div>
+
+                <div className="d-flex align-items-center mb-4">
+                  <div className="bg-white p-3 rounded-circle shadow-sm text-gold me-3">
+                    <i className="fas fa-phone fa-lg"></i>
+                  </div>
+                  <div>
+                    <h5 className="mb-1">Phone</h5>
+                    <p className="mb-0 text-muted small">+1 (555) 123-4567</p>
+                  </div>
+                </div>
+
+                <div className="d-flex align-items-center">
+                  <div className="bg-white p-3 rounded-circle shadow-sm text-gold me-3">
+                    <i className="fas fa-map-marker-alt fa-lg"></i>
+                  </div>
+                  <div>
+                    <h5 className="mb-1">Location</h5>
+                    <p className="mb-0 text-muted small">123 Creative Studio, New York, NY</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Form Column */}
+              <div className="col-lg-6">
+                <form className="bg-white p-4 shadow-sm rounded">
+                  <div className="row g-3">
+                    <div className="col-md-6">
+                      <input type="text" className="form-control" placeholder="Your Name" />
+                    </div>
+                    <div className="col-md-6">
+                      <input type="email" className="form-control" placeholder="Your Email" />
+                    </div>
+                    <div className="col-12">
+                      <input type="text" className="form-control" placeholder="Subject" />
+                    </div>
+                    <div className="col-12">
+                      <textarea className="form-control" rows="5" placeholder="Message"></textarea>
+                    </div>
+                    <div className="col-12">
+                      <button type="submit" className="btn btn-primary w-100">Send Message</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* --- END OF NEW CONTACT SECTION --- */}
+
         {/* Footer */}
         <footer className="py-5 bg-black text-center text-white-50">
           <p>&copy; 2026 Lumina Lens. All Rights Reserved.</p>
@@ -115,5 +184,7 @@ class Landing extends Component {
     );
   }
 }
-
+Landing.propTypes = {
+  onLoginClick: PropTypes.func.isRequired
+};
 export default Landing;
