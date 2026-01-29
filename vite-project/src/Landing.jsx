@@ -51,7 +51,7 @@ class Landing extends Component {
           <div className="container">
             <h1 className="display-2 fw-bold mb-4">Capture the Moment</h1>
             <p className="lead mb-5 opacity-75">Professional photography services for weddings, portraits, and events.</p>
-            <a href="#portfolio" className="btn btn-primary btn-lg">View My Work</a>
+            <a href="#portfolio" className="btn btn-primary btn-lg">View Our Work</a>
           </div>
         </header>
 
@@ -96,7 +96,7 @@ class Landing extends Component {
         {/* Portfolio Section */}
         <section id="portfolio" className="section-padding">
           <div className="container">
-            <h2 className="text-center mb-5">Latest Works</h2>
+            <h2 className="text-center mb-5">Our Latest Works</h2>
             <div className="row g-3">
               {portfolioImages.map((img, i) => (
                 <div className="col-md-4 col-6" key={i}>
@@ -112,7 +112,7 @@ class Landing extends Component {
           <div className="container">
             <div className="text-center mb-5">
               <h6 className="text-gold fw-bold text-uppercase">Get In Touch</h6>
-              <h2>Contact Me</h2>
+              <h2>Contact Us</h2>
             </div>
 
             <div className="row justify-content-center">
@@ -124,7 +124,7 @@ class Landing extends Component {
                   </div>
                   <div>
                     <h5 className="mb-1">Email</h5>
-                    <p className="mb-0 text-muted small">hello@luminalens.com</p>
+                    <p className="mb-0 text-muted small">helloluminalens@gmail.com</p>
                   </div>
                 </div>
 
@@ -134,7 +134,7 @@ class Landing extends Component {
                   </div>
                   <div>
                     <h5 className="mb-1">Phone</h5>
-                    <p className="mb-0 text-muted small">+1 (555) 123-4567</p>
+                    <p className="mb-0 text-muted small">+91 86867 67656</p>
                   </div>
                 </div>
 
@@ -144,7 +144,7 @@ class Landing extends Component {
                   </div>
                   <div>
                     <h5 className="mb-1">Location</h5>
-                    <p className="mb-0 text-muted small">123 Creative Studio, New York, NY</p>
+                    <p className="mb-0 text-muted small">Kalinga Studios, Bhubaneswar, India</p>
                   </div>
                 </div>
               </div>
