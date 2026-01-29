@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+
 // Data Arrays
 const servicesData = [
   { icon: "fas fa-camera", title: "Portrait Photography", desc: "Professional headshots, family portraits, and creative modeling shoots." },
@@ -26,13 +27,34 @@ class Landing extends Component {
             <a className="navbar-brand text-uppercase fw-bold" href="#">
               <i className="fas fa-camera-retro me-2 text-gold"></i>E-Imagination 
             </a>
-            <div className="collapse navbar-collapse show" id="navbarNav">
+            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav ms-auto align-items-center">
-                {['Home', 'About', 'Services', 'Portfolio', 'Contact'].map((item) => (
+                {/* Standard Scroll Links */}
+                {['Home', 'About', 'Services', 'Portfolio'].map((item) => (
                   <li className="nav-item" key={item}>
                     <a className="nav-link" href={`#${item.toLowerCase()}`}>{item}</a>
                   </li>
                 ))}
+
+                {/* NEW RENTALS LINK (Switches View) */}
+                <li className="nav-item">
+                  <button 
+                    className="nav-link bg-transparent border-0 text-uppercase"
+                    style={{ cursor: 'pointer', fontWeight: 500 }}
+                    onClick={this.props.onShopClick}
+                  >
+                    Rentals
+                  </button>
+                </li>
+
+                <li className="nav-item">
+                    <a className="nav-link" href="#contact">Contact</a>
+                </li>
+
+                {/* Login Button */}
                 <li className="nav-item ms-lg-3">
                   <button 
                     className="btn btn-primary btn-sm px-4 rounded-pill"
@@ -107,7 +129,7 @@ class Landing extends Component {
           </div>
         </section>
 
-        {/* --- START OF NEW CONTACT SECTION --- */}
+        {/* Contact Section */}
         <section id="contact" className="section-padding bg-light">
           <div className="container">
             <div className="text-center mb-5">
@@ -151,7 +173,7 @@ class Landing extends Component {
 
               {/* Contact Form Column */}
               <div className="col-lg-6">
-                <form className="bg-white p-4 shadow-sm rounded">
+                <form className="bg-white p-4 shadow-sm rounded" onSubmit={(e) => e.preventDefault()}>
                   <div className="row g-3">
                     <div className="col-md-6">
                       <input type="text" className="form-control" placeholder="Your Name" />
@@ -174,7 +196,6 @@ class Landing extends Component {
             </div>
           </div>
         </section>
-        {/* --- END OF NEW CONTACT SECTION --- */}
 
         {/* Footer */}
         <footer className="py-5 bg-black text-center text-white-50">
@@ -184,7 +205,11 @@ class Landing extends Component {
     );
   }
 }
+
+// Updated PropTypes to include onShopClick
 Landing.propTypes = {
-  onLoginClick: PropTypes.func.isRequired
+  onLoginClick: PropTypes.func.isRequired,
+  onShopClick: PropTypes.func.isRequired
 };
+
 export default Landing;

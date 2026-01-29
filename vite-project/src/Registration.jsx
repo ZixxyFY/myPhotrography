@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import FormInput from './FormInput'; // Import the reusable component
+
 class Registration extends Component {
   constructor(props) {
     super(props);
@@ -14,11 +16,10 @@ class Registration extends Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  // Hard Coded Registration
+  // Hard Coded Registration Logic
   handleSubmit = (e) => {
     e.preventDefault();
     // In a real app, you would send this.state data to a server here.
-    // For now, we just pretend it worked.
     
     alert(`Account created for ${this.state.fullName}! Please Login.`);
     this.props.onLoginClick(); // Redirect to Login page
@@ -38,42 +39,40 @@ class Registration extends Component {
                   <h3 className="fw-bold mb-3 text-center">Sign Up</h3>
                   
                   <form onSubmit={this.handleSubmit}>
-                    <div className="mb-3">
-                      <label className="form-label small fw-bold">Full Name</label>
-                      <input 
-                        type="text" 
-                        name="fullName"
-                        className="form-control" 
-                        placeholder="John Doe" 
-                        value={fullName}
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label small fw-bold">Email Address</label>
-                      <input 
-                        type="email" 
-                        name="email"
-                        className="form-control" 
-                        placeholder="name@example.com" 
-                        value={email}
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label className="form-label small fw-bold">Password</label>
-                      <input 
-                        type="password" 
-                        name="password"
-                        className="form-control" 
-                        placeholder="Create Password" 
-                        value={password}
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </div>
+                    
+                    {/* Full Name Input */}
+                    <FormInput 
+                      label="Full Name"
+                      type="text"
+                      name="fullName"
+                      value={fullName}
+                      onChange={this.handleChange}
+                      placeholder="John Doe"
+                      required={true}
+                    />
+
+                    {/* Email Input */}
+                    <FormInput 
+                      label="Email Address"
+                      type="email"
+                      name="email"
+                      value={email}
+                      onChange={this.handleChange}
+                      placeholder="name@example.com"
+                      required={true}
+                    />
+
+                    {/* Password Input */}
+                    <FormInput 
+                      label="Password"
+                      type="password"
+                      name="password"
+                      value={password}
+                      onChange={this.handleChange}
+                      placeholder="Create Password"
+                      required={true}
+                    />
+
                     <button type="submit" className="btn btn-primary w-100 mb-3">
                       Register
                     </button>
@@ -97,8 +96,10 @@ class Registration extends Component {
     );
   }
 }
+
 Registration.propTypes = {
   onBack: PropTypes.func.isRequired,
   onLoginClick: PropTypes.func.isRequired
 };
+
 export default Registration;

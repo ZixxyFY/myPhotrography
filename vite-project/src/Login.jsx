@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import FormInput from './FormInput'; // Ensure FormInput.jsx is in the same folder
+
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
       role: 'user',
-      email: '',      // Added state to store input
-      password: '',   // Added state to store input
-      error: ''       // To show error messages
+      email: '',
+      password: '',
+      error: ''
     };
   }
 
@@ -15,24 +17,21 @@ class Login extends Component {
     this.setState({ role: newRole });
   }
 
-  // Updates state whenever user types
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value, error: '' });
   }
 
-  // The "Hard Coded" Login Logic
   handleSubmit = (e) => {
     e.preventDefault();
     const { email, password } = this.state;
 
     // HARD CODED CREDENTIALS
-    // You can change these strings to whatever you want to test with
     const validEmail = "user@test.com";
     const validPass = "123456";
 
     if (email === validEmail && password === validPass) {
       alert("Login Successful!");
-      this.props.onBack(); // Navigate back to Home/Landing on success
+      this.props.onBack();
     } else {
       this.setState({ error: "Invalid credentials! Try user@test.com / 123456" });
     }
@@ -69,30 +68,29 @@ class Login extends Component {
                   {error && <div className="alert alert-danger text-center p-2 small">{error}</div>}
 
                   <form onSubmit={this.handleSubmit}>
-                    <div className="mb-3">
-                      <label className="form-label small fw-bold">Email Address</label>
-                      <input 
-                        type="email" 
-                        name="email"
-                        className="form-control" 
-                        placeholder="user@test.com"
-                        value={email}
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label className="form-label small fw-bold">Password</label>
-                      <input 
-                        type="password" 
-                        name="password"
-                        className="form-control" 
-                        placeholder="123456"
-                        value={password}
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </div>
+                    
+                    {/* Validated Email Input */}
+                    <FormInput 
+                      label="Email Address"
+                      type="email"
+                      name="email"
+                      value={email}
+                      onChange={this.handleChange}
+                      placeholder="user@test.com"
+                      required={true}
+                    />
+
+                    {/* Validated Password Input */}
+                    <FormInput 
+                      label="Password"
+                      type="password"
+                      name="password"
+                      value={password}
+                      onChange={this.handleChange}
+                      placeholder="Enter password"
+                      required={true}
+                    />
+
                     <button type="submit" className={`btn w-100 mb-3 ${role === 'user' ? 'btn-primary' : 'btn-dark'}`}>
                       Login
                     </button>
@@ -116,8 +114,10 @@ class Login extends Component {
     );
   }
 }
+
 Login.propTypes = {
   onBack: PropTypes.func.isRequired,
   onRegisterClick: PropTypes.func.isRequired
 };
+
 export default Login;
