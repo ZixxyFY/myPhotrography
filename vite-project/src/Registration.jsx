@@ -75,9 +75,9 @@ class Registration extends Component {
                       onChange={this.handleChange}
                       placeholder="Create Password"
                       required={true}
-                      // Regex: Min 8 chars, at least 1 letter and 1 number
-                      pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#$])[A-Za-z\d@#$]{8,}$"
 
+                      //Regex
+                      pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#$])[A-Za-z\d@#$]{8,}$"
                       errorMsg="Password must be min 8 chars, with at least 1 letter, 1 special character and 1 number."
                     />
 

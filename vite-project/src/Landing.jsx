@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import FormInput from './FormInput'; // <--- 1. Import the reusable component
 
 // Data Arrays
 const servicesData = [
@@ -18,7 +19,43 @@ const portfolioImages = [
 ];
 
 class Landing extends Component {
+  // 2. Initialize State for the Contact Form
+  constructor(props) {
+    super(props);
+    this.state = {
+      cName: '',
+      cEmail: '',
+      cSubject: '',
+      cMessage: ''
+    };
+  }
+
+  // 3. Handle Typing in the Contact Form
+  handleContactChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  }
+
+  // 4. Handle Form Submission
+  handleContactSubmit = (e) => {
+    e.preventDefault();
+    const { cName, cEmail } = this.state;
+    
+    // Simulate sending email
+    alert(`Thanks ${cName}! We have received your message from ${cEmail}. We will contact you shortly.`);
+    
+    // Clear the form
+    this.setState({
+      cName: '',
+      cEmail: '',
+      cSubject: '',
+      cMessage: ''
+    });
+  }
+
   render() {
+    // Destructure state for easier usage
+    const { cName, cEmail, cSubject, cMessage } = this.state;
+
     return (
       <div>
         {/* Navbar */}
@@ -32,14 +69,13 @@ class Landing extends Component {
             </button>
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav ms-auto align-items-center">
-                {/* Standard Scroll Links */}
                 {['Home', 'About', 'Services', 'Portfolio'].map((item) => (
                   <li className="nav-item" key={item}>
                     <a className="nav-link" href={`#${item.toLowerCase()}`}>{item}</a>
                   </li>
                 ))}
-
-                {/* NEW RENTALS LINK (Switches View) */}
+                
+                {/* Rentals Link */}
                 <li className="nav-item">
                   <button 
                     className="nav-link bg-transparent border-0 text-uppercase"
@@ -53,8 +89,7 @@ class Landing extends Component {
                 <li className="nav-item">
                     <a className="nav-link" href="#contact">Contact</a>
                 </li>
-
-                {/* Login Button */}
+                
                 <li className="nav-item ms-lg-3">
                   <button 
                     className="btn btn-primary btn-sm px-4 rounded-pill"
@@ -129,7 +164,7 @@ class Landing extends Component {
           </div>
         </section>
 
-        {/* Contact Section */}
+        {/* --- CONTACT SECTION (UPDATED) --- */}
         <section id="contact" className="section-padding bg-light">
           <div className="container">
             <div className="text-center mb-5">
@@ -173,24 +208,59 @@ class Landing extends Component {
 
               {/* Contact Form Column */}
               <div className="col-lg-6">
-                <form className="bg-white p-4 shadow-sm rounded" onSubmit={(e) => e.preventDefault()}>
-                  <div className="row g-3">
-                    <div className="col-md-6">
-                      <input type="text" className="form-control" placeholder="Your Name" />
-                    </div>
-                    <div className="col-md-6">
-                      <input type="email" className="form-control" placeholder="Your Email" />
-                    </div>
-                    <div className="col-12">
-                      <input type="text" className="form-control" placeholder="Subject" />
-                    </div>
-                    <div className="col-12">
-                      <textarea className="form-control" rows="5" placeholder="Message"></textarea>
-                    </div>
-                    <div className="col-12">
-                      <button type="submit" className="btn btn-primary w-100">Send Message</button>
-                    </div>
+                <form className="bg-white p-4 shadow-sm rounded" onSubmit={this.handleContactSubmit}>
+                  
+                  {/* Name with Validation */}
+                  <FormInput 
+                     label="Your Name"
+                     type="text"
+                     name="cName"
+                     value={cName}
+                     onChange={this.handleContactChange}
+                     placeholder="John Doe"
+                     required={true}
+                     pattern="[A-Za-z ]{3,}"
+                     errorMsg="Name must be at least 3 letters."
+                  />
+
+                  {/* Email with Validation */}
+                  <FormInput 
+                     label="Your Email"
+                     type="email"
+                     name="cEmail"
+                     value={cEmail}
+                     onChange={this.handleContactChange}
+                     placeholder="you@example.com"
+                     required={true}
+                     errorMsg="Please enter a valid email address."
+                  />
+
+                  {/* Subject */}
+                  <FormInput 
+                     label="Subject"
+                     type="text"
+                     name="cSubject"
+                     value={cSubject}
+                     onChange={this.handleContactChange}
+                     placeholder="Photography Inquiry"
+                     required={true}
+                  />
+
+                  {/* Message (Textarea) - FormInput doesn't support textarea, so we use standard HTML here */}
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold">Message</label>
+                    <textarea 
+                      className="form-control" 
+                      rows="5" 
+                      name="cMessage"
+                      value={cMessage}
+                      onChange={this.handleContactChange}
+                      placeholder="Tell us about your event..."
+                      required
+                    ></textarea>
                   </div>
+
+                  <button type="submit" className="btn btn-primary w-100">Send Message</button>
                 </form>
               </div>
             </div>
@@ -206,7 +276,6 @@ class Landing extends Component {
   }
 }
 
-// Updated PropTypes to include onShopClick
 Landing.propTypes = {
   onLoginClick: PropTypes.func.isRequired,
   onShopClick: PropTypes.func.isRequired
