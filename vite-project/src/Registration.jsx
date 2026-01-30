@@ -40,7 +40,7 @@ class Registration extends Component {
                   
                   <form onSubmit={this.handleSubmit}>
                     
-                    {/* Full Name Input */}
+                    {/* Full Name Input with Regex Validation */}
                     <FormInput 
                       label="Full Name"
                       type="text"
@@ -49,6 +49,9 @@ class Registration extends Component {
                       onChange={this.handleChange}
                       placeholder="John Doe"
                       required={true}
+                      // Regex: Must be at least 3 letters, spaces allowed, no numbers
+                      pattern="[A-Za-z ]{3,}"
+                      errorMsg="Name must be at least 3 letters (no numbers)."
                     />
 
                     {/* Email Input */}
@@ -60,9 +63,10 @@ class Registration extends Component {
                       onChange={this.handleChange}
                       placeholder="name@example.com"
                       required={true}
+                      errorMsg="Please enter a valid email address."
                     />
 
-                    {/* Password Input */}
+                    {/* Password Input with Strong Regex Validation */}
                     <FormInput 
                       label="Password"
                       type="password"
@@ -71,6 +75,10 @@ class Registration extends Component {
                       onChange={this.handleChange}
                       placeholder="Create Password"
                       required={true}
+                      // Regex: Min 8 chars, at least 1 letter and 1 number
+                      pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#$])[A-Za-z\d@#$]{8,}$"
+
+                      errorMsg="Password must be min 8 chars, with at least 1 letter, 1 special character and 1 number."
                     />
 
                     <button type="submit" className="btn btn-primary w-100 mb-3">

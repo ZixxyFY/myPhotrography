@@ -2,6 +2,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.1.0",
     "bootstrap": "^5.3.8",
-    "prop-types": "^15.8.1"
+    "prop-types": "^15.8.1",
+    "react-router-dom": "^7.13.0"
   }
 }
