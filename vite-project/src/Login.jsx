@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import FormInput from './FormInput'; // Ensure FormInput.jsx is in the same folder
+import FormInput from './FormInput'; 
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      role: 'user',
+      role: 'user', 
       email: '',
       password: '',
       error: ''
@@ -14,7 +14,7 @@ class Login extends Component {
   }
 
   setRole = (newRole) => {
-    this.setState({ role: newRole });
+    this.setState({ role: newRole, error: '', email: '', password: '' });
   }
 
   handleChange = (e) => {
@@ -23,17 +23,30 @@ class Login extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { email, password } = this.state;
+    const { email, password, role } = this.state;
 
-    // HARD CODED CREDENTIALS
-    const validEmail = "user@test.com";
+    const validUserEmail = "user@test.com";
+    const validAdminEmail = "admin@test.com";
     const validPass = "123456";
 
-    if (email === validEmail && password === validPass) {
-      alert("Login Successful!");
-      this.props.onBack();
+    let isAuthenticated = false;
+    let username = "";
+
+    if (role === 'user' && email === validUserEmail && password === validPass) {
+      isAuthenticated = true;
+      username = "John Doe"; 
+    } else if (role === 'admin' && email === validAdminEmail && password === validPass) {
+      isAuthenticated = true;
+      username = "Admin User";
+    }
+
+    if (isAuthenticated) {
+      // Pass BOTH username and role to App.jsx
+      this.props.onLoginSuccess(username, role); 
     } else {
-      this.setState({ error: "Invalid credentials! Try user@test.com / 123456" });
+      this.setState({ 
+        error: `Invalid ${role} credentials!` 
+      });
     }
   }
 
@@ -50,49 +63,43 @@ class Login extends Component {
                 <div className="card-body p-5">
                   <div className="text-center mb-4">
                     <h3 className="fw-bold mb-3">{role === 'user' ? 'Client Login' : 'Admin Portal'}</h3>
-                    
-                    {/* Role Toggles */}
                     <div className="btn-group w-100" role="group">
                       <button 
+                        type="button" 
                         className={`btn ${role === 'user' ? 'btn-primary' : 'btn-outline-primary'}`}
                         onClick={() => this.setRole('user')}
                       >User</button>
                       <button 
+                        type="button" 
                         className={`btn ${role === 'admin' ? 'btn-dark' : 'btn-outline-dark'}`}
                         onClick={() => this.setRole('admin')}
                       >Admin</button>
                     </div>
                   </div>
                   
-                  {/* Error Message Display */}
                   {error && <div className="alert alert-danger text-center p-2 small">{error}</div>}
 
                   <form onSubmit={this.handleSubmit}>
-                    
-                    {/* Validated Email Input */}
                     <FormInput 
                       label="Email Address"
                       type="email"
                       name="email"
                       value={email}
                       onChange={this.handleChange}
-                      placeholder="user@test.com"
+                      placeholder={role === 'user' ? "user@test.com" : "admin@test.com"}
                       required={true}
                     />
-
-                    {/* Validated Password Input */}
                     <FormInput 
                       label="Password"
                       type="password"
                       name="password"
                       value={password}
                       onChange={this.handleChange}
-                      placeholder="Enter password"
+                      placeholder="123456"
                       required={true}
                     />
-
                     <button type="submit" className={`btn w-100 mb-3 ${role === 'user' ? 'btn-primary' : 'btn-dark'}`}>
-                      Login
+                      Login as {role === 'user' ? 'Client' : 'Admin'}
                     </button>
                   </form>
                   
@@ -117,7 +124,8 @@ class Login extends Component {
 
 Login.propTypes = {
   onBack: PropTypes.func.isRequired,
-  onRegisterClick: PropTypes.func.isRequired
+  onRegisterClick: PropTypes.func.isRequired,
+  onLoginSuccess: PropTypes.func.isRequired
 };
 
 export default Login;

@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import FormInput from './FormInput'; // <--- 1. Import the reusable component
+import FormInput from './FormInput';
 
-// Data Arrays
 const servicesData = [
-  { icon: "fas fa-camera", title: "Portrait Photography", desc: "Professional headshots, family portraits, and creative modeling shoots." },
-  { icon: "fas fa-heart", title: "Wedding & Events", desc: "Full-day coverage for your special day. Capturing candid moments." },
-  { icon: "fas fa-wand-magic-sparkles", title: "Photo Retouching", desc: "High-end editing and color grading to bring out the best in every image." }
+  { icon: "fas fa-camera", title: "Portrait Photography", desc: "Professional headshots." },
+  { icon: "fas fa-heart", title: "Wedding & Events", desc: "Full-day coverage." },
+  { icon: "fas fa-wand-magic-sparkles", title: "Photo Retouching", desc: "High-end editing." }
 ];
 
 const portfolioImages = [
@@ -19,42 +18,26 @@ const portfolioImages = [
 ];
 
 class Landing extends Component {
-  // 2. Initialize State for the Contact Form
   constructor(props) {
     super(props);
     this.state = {
-      cName: '',
-      cEmail: '',
-      cSubject: '',
-      cMessage: ''
+      cName: '', cEmail: '', cSubject: '', cMessage: ''
     };
   }
 
-  // 3. Handle Typing in the Contact Form
   handleContactChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  // 4. Handle Form Submission
   handleContactSubmit = (e) => {
     e.preventDefault();
-    const { cName, cEmail } = this.state;
-    
-    // Simulate sending email
-    alert(`Thanks ${cName}! We have received your message from ${cEmail}. We will contact you shortly.`);
-    
-    // Clear the form
-    this.setState({
-      cName: '',
-      cEmail: '',
-      cSubject: '',
-      cMessage: ''
-    });
+    alert(`Message sent! We will contact you at ${this.state.cEmail}`);
+    this.setState({ cName: '', cEmail: '', cSubject: '', cMessage: '' });
   }
 
   render() {
-    // Destructure state for easier usage
     const { cName, cEmail, cSubject, cMessage } = this.state;
+    const { user, onLogout, onLoginClick, onShopClick } = this.props;
 
     return (
       <div>
@@ -75,12 +58,11 @@ class Landing extends Component {
                   </li>
                 ))}
                 
-                {/* Rentals Link */}
                 <li className="nav-item">
                   <button 
                     className="nav-link bg-transparent border-0 text-uppercase"
                     style={{ cursor: 'pointer', fontWeight: 500 }}
-                    onClick={this.props.onShopClick}
+                    onClick={onShopClick}
                   >
                     Rentals
                   </button>
@@ -90,14 +72,33 @@ class Landing extends Component {
                     <a className="nav-link" href="#contact">Contact</a>
                 </li>
                 
-                <li className="nav-item ms-lg-3">
-                  <button 
-                    className="btn btn-primary btn-sm px-4 rounded-pill"
-                    onClick={this.props.onLoginClick}
-                  >
-                    Login
-                  </button>
-                </li>
+                {user ? (
+                   <>
+                     <li className="nav-item ms-lg-3">
+                       <span className="nav-link text-gold fw-bold text-uppercase" style={{cursor: 'default'}}>
+                         Hi, {user}
+                       </span>
+                     </li>
+                     <li className="nav-item ms-2">
+                       <button 
+                         className="btn btn-outline-light btn-sm px-4 rounded-pill text-uppercase fw-bold"
+                         onClick={onLogout}
+                       >
+                         Logout
+                       </button>
+                     </li>
+                   </>
+                ) : (
+                   <li className="nav-item ms-lg-3">
+                     <button 
+                       className="btn btn-primary btn-sm px-4 rounded-pill text-uppercase fw-bold"
+                       onClick={onLoginClick}
+                     >
+                       Login
+                     </button>
+                   </li>
+                )}
+
               </ul>
             </div>
           </div>
@@ -108,7 +109,8 @@ class Landing extends Component {
           <div className="container">
             <h1 className="display-2 fw-bold mb-4">Capture the Moment</h1>
             <p className="lead mb-5 opacity-75">Professional photography services for weddings, portraits, and events.</p>
-            <a href="#portfolio" className="btn btn-primary btn-lg">View Our Work</a>
+            {/* Added text-uppercase and fw-bold here too */}
+            <a href="#portfolio" className="btn btn-primary btn-lg text-uppercase fw-bold px-5 rounded-pill">View Our Work</a>
           </div>
         </header>
 
@@ -123,7 +125,7 @@ class Landing extends Component {
                 <h6 className="text-gold fw-bold text-uppercase mb-3">About Me</h6>
                 <h2 className="mb-4">Visual Storyteller & Editor</h2>
                 <p className="text-muted">I strive to capture raw emotion in every frame.</p>
-                <button className="btn btn-dark rounded-pill px-4 mt-3">Get in Touch</button>
+                <button className="btn btn-dark rounded-pill px-4 mt-3 text-uppercase fw-bold">Get in Touch</button>
               </div>
             </div>
           </div>
@@ -164,7 +166,7 @@ class Landing extends Component {
           </div>
         </section>
 
-        {/* --- CONTACT SECTION (UPDATED) --- */}
+        {/* Contact Section */}
         <section id="contact" className="section-padding bg-light">
           <div className="container">
             <div className="text-center mb-5">
@@ -173,7 +175,6 @@ class Landing extends Component {
             </div>
 
             <div className="row justify-content-center">
-              {/* Contact Info Column */}
               <div className="col-lg-4 mb-4 mb-lg-0">
                 <div className="d-flex align-items-center mb-4">
                   <div className="bg-white p-3 rounded-circle shadow-sm text-gold me-3">
@@ -181,20 +182,9 @@ class Landing extends Component {
                   </div>
                   <div>
                     <h5 className="mb-1">Email</h5>
-                    <p className="mb-0 text-muted small">helloluminalens@gmail.com</p>
+                    <p className="mb-0 text-muted small">eImagination@gmail.com</p>
                   </div>
                 </div>
-
-                <div className="d-flex align-items-center mb-4">
-                  <div className="bg-white p-3 rounded-circle shadow-sm text-gold me-3">
-                    <i className="fas fa-phone fa-lg"></i>
-                  </div>
-                  <div>
-                    <h5 className="mb-1">Phone</h5>
-                    <p className="mb-0 text-muted small">+91 86867 67656</p>
-                  </div>
-                </div>
-
                 <div className="d-flex align-items-center">
                   <div className="bg-white p-3 rounded-circle shadow-sm text-gold me-3">
                     <i className="fas fa-map-marker-alt fa-lg"></i>
@@ -206,70 +196,36 @@ class Landing extends Component {
                 </div>
               </div>
 
-              {/* Contact Form Column */}
               <div className="col-lg-6">
                 <form className="bg-white p-4 shadow-sm rounded" onSubmit={this.handleContactSubmit}>
-                  
-                  {/* Name with Validation */}
                   <FormInput 
-                     label="Your Name"
-                     type="text"
-                     name="cName"
-                     value={cName}
-                     onChange={this.handleContactChange}
-                     placeholder="John Doe"
-                     required={true}
-                     pattern="[A-Za-z ]{3,}"
-                     errorMsg="Name must be at least 3 letters."
+                     label="Your Name" type="text" name="cName" value={cName}
+                     onChange={this.handleContactChange} placeholder="John Doe" required={true}
                   />
-
-                  {/* Email with Validation */}
                   <FormInput 
-                     label="Your Email"
-                     type="email"
-                     name="cEmail"
-                     value={cEmail}
-                     onChange={this.handleContactChange}
-                     placeholder="you@example.com"
-                     required={true}
-                     errorMsg="Please enter a valid email address."
+                     label="Your Email" type="email" name="cEmail" value={cEmail}
+                     onChange={this.handleContactChange} placeholder="you@example.com" required={true}
                   />
-
-                  {/* Subject */}
                   <FormInput 
-                     label="Subject"
-                     type="text"
-                     name="cSubject"
-                     value={cSubject}
-                     onChange={this.handleContactChange}
-                     placeholder="Photography Inquiry"
-                     required={true}
+                     label="Subject" type="text" name="cSubject" value={cSubject}
+                     onChange={this.handleContactChange} placeholder="Inquiry" required={true}
                   />
-
-                  {/* Message (Textarea) - FormInput doesn't support textarea, so we use standard HTML here */}
                   <div className="mb-3">
                     <label className="form-label small fw-bold">Message</label>
                     <textarea 
-                      className="form-control" 
-                      rows="5" 
-                      name="cMessage"
-                      value={cMessage}
-                      onChange={this.handleContactChange}
-                      placeholder="Tell us about your event..."
-                      required
+                      className="form-control" rows="5" name="cMessage" value={cMessage}
+                      onChange={this.handleContactChange} required
                     ></textarea>
                   </div>
-
-                  <button type="submit" className="btn btn-primary w-100">Send Message</button>
+                  <button type="submit" className="btn btn-primary w-100 text-uppercase fw-bold">Send Message</button>
                 </form>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Footer */}
         <footer className="py-5 bg-black text-center text-white-50">
-          <p>&copy; 2026 Lumina Lens. All Rights Reserved.</p>
+          <p>&copy; 2026 E-imagination. All Rights Reserved.</p>
         </footer>
       </div>
     );
@@ -278,7 +234,9 @@ class Landing extends Component {
 
 Landing.propTypes = {
   onLoginClick: PropTypes.func.isRequired,
-  onShopClick: PropTypes.func.isRequired
+  onShopClick: PropTypes.func.isRequired,
+  onLogout: PropTypes.func.isRequired,
+  user: PropTypes.string
 };
 
 export default Landing;
