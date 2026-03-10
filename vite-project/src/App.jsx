@@ -1,96 +1,108 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Landing from './Landing';
 import Login from './Login';
 import Registration from './Registration';
 import RentalShop from './RentalShop';
-import Dashboard from './Dashboard';
+import Dashboard from './Dashboard';    
+import UserDashboard from './UserDashboard'; 
 import './App.css'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentView: 'landing',
-      user: null, 
-      role: null // <--- NEW: Track if they are 'admin' or 'user'
-    };
-  }
+const App = () => {
+  const [currentView, setCurrentView] = useState('landing');
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
 
   // --- NAVIGATION ---
-  navigateToLogin = () => { this.setState({ currentView: 'login' }); }
-  navigateToRegister = () => { this.setState({ currentView: 'registration' }); }
-  navigateToHome = () => { this.setState({ currentView: 'landing' }); }
-  navigateToRental = () => { this.setState({ currentView: 'rental' }); }
+  const navigateToLogin = () => setCurrentView('login');
+  const navigateToRegister = () => setCurrentView('registration');
+  const navigateToHome = () => setCurrentView('landing');
+  const navigateToRental = () => setCurrentView('rental');
+  
+  // NEW: Helper to open the correct dashboard based on who is logged in
+  const navigateToDashboard = () => {
+    if (role === 'admin') {
+      setCurrentView('admin-dashboard');
+    } else if (role === 'user') {
+      setCurrentView('user-dashboard');
+    }
+  };
 
   // --- AUTHENTICATION ---
-  
-  handleLoginSuccess = (username, role) => {
-    this.setState({ 
-      user: username,
-      role: role 
-    }, () => {
-      // REDIRECT LOGIC
-      if (role === 'admin') {
-        this.setState({ currentView: 'dashboard' });
-      } else {
-        this.setState({ currentView: 'landing' });
-      }
-    });
-  }
+  const handleLoginSuccess = (username, userRole) => {
+    setUser(username);
+    setRole(userRole);
+    
+    // REDIRECT LOGIC UPDATED:
+    if (userRole === 'admin') {
+      // Admins usually want to go straight to work
+      setCurrentView('admin-dashboard');
+    } else {
+      // Users stay on Landing Page (Home) to browse, 
+      // but they are now logged in.
+      setCurrentView('landing'); 
+    }
+  };
 
-  handleLogout = () => {
-    this.setState({ 
-      user: null, 
-      role: null,
-      currentView: 'landing' 
-    });
-  }
+  const handleLogout = () => {
+    setUser(null);
+    setRole(null);
+    setCurrentView('landing');
+  };
 
-  render() {
-    const { currentView, user, role } = this.state;
+  return (
+    <div className="App">
+      {/* LANDING PAGE */}
+      {currentView === 'landing' && (
+        <Landing 
+          user={user} 
+          onLoginClick={navigateToLogin} 
+          onShopClick={navigateToRental}
+          onLogout={handleLogout}
+          // PASS THE DASHBOARD NAVIGATION FUNCTION
+          onDashboardClick={navigateToDashboard} 
+        />
+      )}
 
-    return (
-      <div className="App">
-        {/* LANDING PAGE: Pass 'user' and 'onLogout' to change UI */}
-        {currentView === 'landing' && (
-          <Landing 
+      {/* LOGIN PAGE */}
+      {currentView === 'login' && (
+        <Login 
+          onBack={navigateToHome} 
+          onRegisterClick={navigateToRegister}
+          onLoginSuccess={handleLoginSuccess} 
+        />
+      )}
+
+      {/* REGISTRATION PAGE */}
+      {currentView === 'registration' && (
+        <Registration 
+          onBack={navigateToHome} 
+          onLoginClick={navigateToLogin}
+        />
+      )}
+
+      {/* RENTAL SHOP PAGE */}
+      {currentView === 'rental' && (
+          <RentalShop onBack={navigateToHome} />
+      )}
+
+      {/* ADMIN DASHBOARD */}
+      {currentView === 'admin-dashboard' && role === 'admin' && (
+          <Dashboard 
             user={user} 
-            onLoginClick={this.navigateToLogin} 
-            onShopClick={this.navigateToRental}
-            onLogout={this.handleLogout}
+            onLogout={handleLogout} 
           />
-        )}
+      )}
 
-        {currentView === 'login' && (
-          <Login 
-            onBack={this.navigateToHome} 
-            onRegisterClick={this.navigateToRegister}
-            onLoginSuccess={this.handleLoginSuccess} 
+      {/* USER DASHBOARD */}
+      {currentView === 'user-dashboard' && role === 'user' && (
+          <UserDashboard 
+            user={user} 
+            onLogout={handleLogout} 
           />
-        )}
-
-        {currentView === 'registration' && (
-          <Registration 
-            onBack={this.navigateToHome} 
-            onLoginClick={this.navigateToLogin}
-          />
-        )}
-
-        {currentView === 'rental' && (
-           <RentalShop onBack={this.navigateToHome} />
-        )}
-
-        {/* DASHBOARD: Only show if view is dashboard AND role is admin */}
-        {currentView === 'dashboard' && role === 'admin' && (
-           <Dashboard 
-             user={user} 
-             onLogout={this.handleLogout} 
-           />
-        )}
-      </div>
-    );
-  }
-}
+      )}
+    </div>
+  );
+};
 
 export default App;

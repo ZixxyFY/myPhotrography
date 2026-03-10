@@ -1,237 +1,373 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import FormInput from './FormInput';
 
-const servicesData = [
-  { icon: "fas fa-camera", title: "Portrait Photography", desc: "Professional headshots." },
-  { icon: "fas fa-heart", title: "Wedding & Events", desc: "Full-day coverage." },
-  { icon: "fas fa-wand-magic-sparkles", title: "Photo Retouching", desc: "High-end editing." }
+/* ===== PORTFOLIO / TEAM DATA ===== */
+const portfolioData = [
+  {
+    img: "https://randomuser.me/api/portraits/men/32.jpg",
+    name: "Rohit Sharma",
+    role: "Wedding Photographer",
+    phone: "+91 98765 43210",
+    instagram: "#",
+    facebook: "#",
+    twitter: "#"
+  },
+  {
+    img: "https://randomuser.me/api/portraits/women/44.jpg",
+    name: "Ananya Singh",
+    role: "Portrait Photographer",
+    phone: "+91 91234 56789",
+    instagram: "#",
+    facebook: "#",
+    twitter: "#"
+  },
+  {
+    img: "https://randomuser.me/api/portraits/men/65.jpg",
+    name: "Vikram Das",
+    role: "Event Photographer",
+    phone: "+91 99887 66554",
+    instagram: "#",
+    facebook: "#",
+    twitter: "#"
+  },
+  {
+    img: "https://randomuser.me/api/portraits/women/68.jpg",
+    name: "Neha Patel",
+    role: "Fashion Photographer",
+    phone: "+91 90909 12121",
+    instagram: "#",
+    facebook: "#",
+    twitter: "#"
+  }
 ];
 
-const portfolioImages = [
-  "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1551316679-9c6ae9dec224?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=600&q=80"
-];
-
-const Landing = ({ user, onLogout, onLoginClick, onShopClick }) => {
-  // 1. Setup Form State using one Object
+const Landing = ({ user, onLogout, onLoginClick, onDashboardClick }) => {
   const [formData, setFormData] = useState({
-    cName: '',
-    cEmail: '',
-    cSubject: '',
-    cMessage: ''
+    cName: '', cEmail: '', cSubject: '', cMessage: ''
   });
 
-  // 2. Handle Inputs
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Slideshow Effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex(prev => (prev + 1) % portfolioData.length);
+    }, 3000); 
+    return () => clearInterval(interval);
+  }, []);
+
   const handleContactChange = (e) => {
-    // Keep existing data (...formData) and update only the changed field
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  // 3. Handle Submit
   const handleContactSubmit = (e) => {
     e.preventDefault();
     alert(`Message sent! We will contact you at ${formData.cEmail}`);
-    // Reset Form
     setFormData({ cName: '', cEmail: '', cSubject: '', cMessage: '' });
   }
 
-  return (
-    <div>
-      {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div className="container">
-          <a className="navbar-brand text-uppercase fw-bold" href="#">
-            <i className="fas fa-camera-retro me-2 text-gold"></i>E-Imagination 
-          </a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto align-items-center">
-              {['Home', 'About', 'Services', 'Portfolio'].map((item) => (
-                <li className="nav-item" key={item}>
-                  <a className="nav-link" href={`#${item.toLowerCase()}`}>{item}</a>
-                </li>
-              ))}
-              
-              <li className="nav-item">
-                <button 
-                  className="nav-link bg-transparent border-0 text-uppercase"
-                  style={{ cursor: 'pointer', fontWeight: 500 }}
-                  onClick={onShopClick}
-                >
-                  Rentals
-                </button>
-              </li>
+  // Custom Styles for the specific design elements
+  const styles = {
+    yellowBar: {
+      position: 'fixed',
+      left: 0,
+      top: 0,
+      bottom: 0,
+      width: '80px',
+      backgroundColor: '#FFC107',
+      zIndex: 1000,
+      display: 'none' // Hidden on mobile, shown on desktop via media query logic usually, but handled inline below
+    },
+    mainContent: {
+      marginLeft: '0px', // Adjusted for mobile first
+      backgroundColor: '#101010',
+      minHeight: '100vh',
+      color: 'white',
+      overflowX: 'hidden'
+    },
+    cornerBracket: {
+      position: 'absolute',
+      width: '20px',
+      height: '20px',
+      borderColor: '#777',
+      borderStyle: 'solid',
+      transition: 'all 0.3s'
+    },
+    circleBg: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: '500px',
+      height: '500px',
+      border: '2px dashed rgba(255,255,255,0.1)',
+      borderRadius: '50%',
+      zIndex: 0
+    }
+  };
 
-              <li className="nav-item">
-                  <a className="nav-link" href="#contact">Contact</a>
-              </li>
-              
-              {user ? (
-                 <>
-                   <li className="nav-item ms-lg-3">
-                     <span className="nav-link text-gold fw-bold text-uppercase" style={{cursor: 'default'}}>Hi, {user}</span>
-                   </li>
-                   <li className="nav-item ms-2">
-                     <button 
-                       className="btn btn-outline-light btn-sm px-4 rounded-pill text-uppercase fw-bold"
-                       onClick={onLogout}
-                     >
-                       Logout
+  return (
+    <div className="d-flex">
+      {/* 1. Left Yellow Sidebar (Visible on large screens) */}
+      <div className="d-none d-lg-block" style={{...styles.yellowBar, width: '80px'}}></div>
+
+      {/* 2. Main Content Wrapper */}
+      <div style={{...styles.mainContent, width: '100%'}} className="flex-grow-1 ps-lg-5">
+        
+        {/* Navbar */}
+        <nav className="navbar navbar-expand-lg navbar-dark pt-4 px-4">
+          <div className="container-fluid">
+            {/* Logo hidden or minimal since sidebar exists, but keeping brand for mobile */}
+            <a className="navbar-brand d-lg-none text-warning fw-bold" href="#">STUDIO</a>
+            
+            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+              <span className="navbar-toggler-icon"></span>
+            </button>
+
+            <div className="collapse navbar-collapse justify-content-between" id="navbarNav">
+              {/* Left Links */}
+              <ul className="navbar-nav gap-lg-4">
+                <li className="nav-item"><a className="nav-link text-white active" href="#home">Home</a></li>
+                <li className="nav-item"><a className="nav-link text-white" href="#about">About us</a></li>
+                <li className="nav-item"><a className="nav-link text-white" href="#portfolio">Portfolio</a></li>
+                <li className="nav-item"><a className="nav-link text-white" href="#contact">Contact us</a></li>
+              </ul>
+
+              {/* Right Login/User Section */}
+              <ul className="navbar-nav align-items-center">
+                {user ? (
+                   <li className="nav-item">
+                     <button onClick={onDashboardClick} className="btn text-white fw-bold d-flex align-items-center gap-2" style={{background: 'none', border: 'none'}}>
+                       <div className="bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center" style={{width: '35px', height: '35px'}}>
+                         <i className="fas fa-user"></i>
+                       </div>
+                       Hi, {user}
                      </button>
                    </li>
-                 </>
-              ) : (
-                 <li className="nav-item ms-lg-3">
-                   <button 
-                     className="btn btn-primary btn-sm px-4 rounded-pill text-uppercase fw-bold"
-                     onClick={onLoginClick}
-                   >
-                     Login
-                   </button>
-                 </li>
-              )}
-            </ul>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <header id="home" className="hero-section text-center text-white">
-        <div className="container">
-          <h1 className="display-2 fw-bold mb-4">Capture the Moment</h1>
-          <p className="lead mb-5 opacity-75">Professional photography services for weddings, portraits, and events.</p>
-          <a href="#portfolio" className="btn btn-primary btn-lg text-uppercase fw-bold px-5 rounded-pill">View Our Work</a>
-        </div>
-      </header>
-
-      {/* About Section */}
-      <section id="about" className="section-padding">
-        <div className="container">
-          <div className="row align-items-center">
-            <div className="col-lg-6 mb-4">
-              <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800" className="img-fluid rounded shadow" alt="About" />
-            </div>
-            <div className="col-lg-6 ps-lg-5">
-              <h6 className="text-gold fw-bold text-uppercase mb-3">About Me</h6>
-              <h2 className="mb-4">Visual Storyteller & Editor</h2>
-              <p className="text-muted">I strive to capture raw emotion in every frame.</p>
-              <button className="btn btn-dark rounded-pill px-4 mt-3 text-uppercase fw-bold">Get in Touch</button>
+                ) : (
+                   <li className="nav-item">
+                     <button onClick={onLoginClick} className="btn text-white d-flex align-items-center gap-2" style={{background: 'none', border: 'none'}}>
+                       <i className="fas fa-user text-warning"></i> 
+                       <span className="fw-500">Sign In | Log In</span>
+                     </button>
+                   </li>
+                )}
+              </ul>
             </div>
           </div>
-        </div>
-      </section>
+        </nav>
 
-      {/* Services Section */}
-      <section id="services" className="section-padding bg-light">
-        <div className="container">
-          <div className="text-center mb-5">
-            <h6 className="text-gold fw-bold text-uppercase">Expertise</h6>
-            <h2>My Services</h2>
-          </div>
-          <div className="row g-4">
-            {servicesData.map((s, i) => (
-              <div className="col-md-4" key={i}>
-                <div className="card service-card p-4 text-center">
-                  <div className="mb-3 text-gold"><i className={`${s.icon} fa-3x`}></i></div>
-                  <h4>{s.title}</h4>
-                  <p className="text-muted small">{s.desc}</p>
+        {/* Hero Section */}
+        <header id="home" className="container-fluid py-5 d-flex align-items-center" style={{minHeight: '85vh', position: 'relative'}}>
+           <div className="row w-100 align-items-center">
+             
+             {/* Left Text Content */}
+             <div className="col-lg-6 ps-lg-5 mb-5 mb-lg-0" style={{zIndex: 2}}>
+                <h6 className="text-warning text-uppercase mb-3" style={{letterSpacing: '3px', fontSize: '0.9rem'}}>Photography Studio</h6>
+                
+                <div className="position-relative mb-4 p-2">
+                  {/* Top Left Bracket */}
+                  <span style={{...styles.cornerBracket, borderTopWidth: '1px', borderLeftWidth: '1px', top: 0, left: 0}}></span>
+                  
+                  <h1 className="display-3 fw-bold text-white mb-0" style={{lineHeight: '1.1'}}>Capture Your</h1>
+                  <h1 className="display-3 fw-bold text-warning mb-0" style={{lineHeight: '1.1'}}>Perfect Moments.</h1>
+                  
+                  {/* Bottom Right Bracket */}
+                  <span style={{...styles.cornerBracket, borderBottomWidth: '1px', borderRightWidth: '1px', bottom: 0, right: '20%'}}></span>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+             </div>
 
-      {/* Portfolio Section */}
-      <section id="portfolio" className="section-padding">
-        <div className="container">
-          <h2 className="text-center mb-5">Our Latest Works</h2>
-          <div className="row g-3">
-            {portfolioImages.map((img, i) => (
-              <div className="col-md-4 col-6" key={i}>
-                <img src={img} className="gallery-img rounded" alt="Gallery" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="section-padding bg-light">
-        <div className="container">
-          <div className="text-center mb-5">
-            <h6 className="text-gold fw-bold text-uppercase">Get In Touch</h6>
-            <h2>Contact Us</h2>
-          </div>
-
-          <div className="row justify-content-center">
-            <div className="col-lg-4 mb-4 mb-lg-0">
-              <div className="d-flex align-items-center mb-4">
-                <div className="bg-white p-3 rounded-circle shadow-sm text-gold me-3">
-                  <i className="fas fa-envelope fa-lg"></i>
-                </div>
-                <div>
-                  <h5 className="mb-1">Email</h5>
-                  <p className="mb-0 text-muted small">helloluminalens@gmail.com</p>
-                </div>
-              </div>
-              <div className="d-flex align-items-center">
-                <div className="bg-white p-3 rounded-circle shadow-sm text-gold me-3">
-                  <i className="fas fa-map-marker-alt fa-lg"></i>
-                </div>
-                <div>
-                  <h5 className="mb-1">Location</h5>
-                  <p className="mb-0 text-muted small">Kalinga Studios, Bhubaneswar, India</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-lg-6">
-              <form className="bg-white p-4 shadow-sm rounded" onSubmit={handleContactSubmit}>
-                <FormInput 
-                   label="Your Name" type="text" name="cName" value={formData.cName}
-                   onChange={handleContactChange} placeholder="John Doe" required={true}
+             {/* Right Image Content */}
+             <div className="col-lg-6 position-relative text-center">
+                {/* Background Concentric Circles Effect */}
+                <div style={{...styles.circleBg, width: '400px', height: '400px', opacity: 0.3}}></div>
+                <div style={{...styles.circleBg, width: '550px', height: '550px', opacity: 0.2}}></div>
+                <div style={{...styles.circleBg, width: '700px', height: '700px', opacity: 0.1, borderStyle: 'solid'}}></div>
+                
+                {/* Main Image */}
+                <img 
+                  src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80" 
+                  alt="Hands holding camera" 
+                  className="img-fluid position-relative"
+                  style={{zIndex: 1, maxHeight: '550px', transform: 'scale(1.1)'}} 
                 />
-                <FormInput 
-                   label="Your Email" type="email" name="cEmail" value={formData.cEmail}
-                   onChange={handleContactChange} placeholder="you@example.com" required={true}
+             </div>
+           </div>
+        </header>
+
+        {/* About Section */}
+        <section id="about" className="section-padding py-5" style={{backgroundColor: '#151515'}}>
+          <div className="container">
+            <div className="row align-items-center justify-content-center">
+              <div className="col-lg-4 mb-5 mb-lg-0 position-relative">
+                {/* Decorative border frame */}
+                <div style={{position: 'absolute', top: '-20px', left: '-20px', width: '100%', height: '100%', border: '2px solid #333', zIndex: 0}}></div>
+                <img 
+                  src="https://unsplash.com/photos/54fAtCSq6gQ/download" 
+                  className="img-fluid position-relative shadow-lg" 
+                  alt="Person holding black and grey pentax camera"
+                  style={{zIndex: 1}}
                 />
-                <FormInput 
-                   label="Subject" type="text" name="cSubject" value={formData.cSubject}
-                   onChange={handleContactChange} placeholder="Inquiry" required={true}
-                />
-                <div className="mb-3">
-                  <label className="form-label small fw-bold">Message</label>
-                  <textarea 
-                    className="form-control" rows="5" name="cMessage" value={formData.cMessage}
-                    onChange={handleContactChange} required
-                  ></textarea>
+              </div>
+              <div className="col-lg-6 ps-lg-5">
+                <h6 className="text-warning fw-bold text-uppercase mb-3" style={{letterSpacing: '2px'}}>Who We Are</h6>
+                <h2 className="display-5 fw-bold text-white mb-4">We Tell Stories Through The Lens</h2>
+                <p className="text-white-50 lead mb-4">
+                  Founded in 2020, our studio has been dedicated to capturing the essence of life's most beautiful moments. We believe that every picture tells a story, and we are here to help you write yours.
+                </p>
+                <div className="row mb-4">
+                  <div className="col-6">
+                    <h2 className="text-warning fw-bold">150+</h2>
+                    <p className="text-white-50 small">Weddings Shot</p>
+                  </div>
+                  <div className="col-6">
+                    <h2 className="text-warning fw-bold">500+</h2>
+                    <p className="text-white-50 small">Happy Clients</p>
+                  </div>
                 </div>
-                <button type="submit" className="btn btn-primary w-100 text-uppercase fw-bold">Send Message</button>
-              </form>
+                <button className="btn btn-outline-warning rounded-0 px-4 py-2 text-uppercase fw-bold">Read Our Story</button>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <footer className="py-5 bg-black text-center text-white-50">
-        <p>&copy; 2026 Lumina Lens. All Rights Reserved.</p>
-      </footer>
+        {/* Portfolio Section */}
+        <section id="portfolio" className="section-padding overflow-hidden py-5 mb-5" style={{background: '#1a1a1a'}}>
+          <div className="container text-center">
+            <h2 className="mb-5 text-white">Our Expert Team</h2>
+            
+            {/* UPDATED HEIGHT to 600px to prevent overlap with Contact section */}
+            <div className="position-relative d-flex justify-content-center align-items-center" style={{ height: "600px" }}>
+              {portfolioData.map((item, index) => {
+                const total = portfolioData.length;
+                const isCenter = index === activeIndex;
+                const isLeft = index === (activeIndex - 1 + total) % total;
+                const isRight = index === (activeIndex + 1) % total;
+                
+                let translateX = 0;
+                let scale = 0.6;
+                let opacity = 0.4;
+                let zIndex = 1;
+                
+                if (isCenter) { scale = 1; opacity = 1; zIndex = 10; } 
+                else if (isLeft) { translateX = -300; zIndex = 5; } 
+                else if (isRight) { translateX = 300; zIndex = 5; } 
+                else { opacity = 0; }
+                
+                if (opacity === 0) return null;
+                
+                return (
+                  <div key={index} className="card shadow border-0 bg-dark" style={{ position: "absolute", width: "280px", transform: `translateX(${translateX}px) scale(${scale})`, transition: "all 0.6s ease", opacity, zIndex }}>
+                    <img src={item.img} alt={item.name} className="card-img-top" style={{ height: "250px", objectFit: "cover", opacity: 0.9 }} />
+                    <div className="card-body text-white border-top border-secondary">
+                        <h5 className="fw-bold mb-1">{item.name}</h5>
+                        <p className="text-warning small fw-bold mb-2">{item.role}</p>
+                        <p className="small text-muted mb-3"><i className="fas fa-phone-alt me-1"></i>{item.phone}</p>
+                        
+                        <div className="d-flex justify-content-center gap-3">
+                            <a href={item.facebook} className="text-white-50" style={{ transition: 'color 0.3s' }}><i className="fab fa-facebook-f"></i></a>
+                            <a href={item.instagram} className="text-white-50" style={{ transition: 'color 0.3s' }}><i className="fab fa-instagram"></i></a>
+                            <a href={item.twitter} className="text-white-50" style={{ transition: 'color 0.3s' }}><i className="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Section */}
+        <section id="contact" className="section-padding py-5" style={{backgroundColor: '#101010'}}>
+          <div className="container">
+            <div className="text-center mb-5">
+              <h6 className="text-warning fw-bold text-uppercase">Get In Touch</h6>
+              <h2 className="text-white">Contact Us</h2>
+            </div>
+            <div className="row justify-content-center">
+              <div className="col-lg-4 mb-4 mb-lg-0">
+                <div className="d-flex align-items-center mb-4">
+                  <div className="bg-dark border border-secondary p-3 rounded-circle shadow-sm text-warning me-3"><i className="fas fa-envelope fa-lg"></i></div>
+                  <div><h5 className="mb-1 text-white">Email</h5><p className="mb-0 text-white-50 small">eImagination@studio.com</p></div>
+                </div>
+                <div className="d-flex align-items-center">
+                  <div className="bg-dark border border-secondary p-3 rounded-circle shadow-sm text-warning me-3"><i className="fas fa-map-marker-alt fa-lg"></i></div>
+                  <div><h5 className="mb-1 text-white">Location</h5><p className="mb-0 text-white-50 small">Kaling Studios, Bhubaneswar</p></div>
+                </div>
+              </div>
+              <div className="col-lg-6">
+                <form className="bg-dark p-4 shadow-sm border border-secondary rounded" onSubmit={handleContactSubmit}>
+                  {/* Note: Ensure FormInput accepts style/className for dark mode, defaulting here to bootstrap classes for inputs */}
+                  <div className="mb-3">
+                      <label className="text-white-50 small">Name</label>
+                      <input type="text" name="cName" className="form-control bg-black text-white border-secondary" value={formData.cName} onChange={handleContactChange} />
+                  </div>
+                  <div className="mb-3">
+                      <label className="text-white-50 small">Email</label>
+                      <input type="email" name="cEmail" className="form-control bg-black text-white border-secondary" value={formData.cEmail} onChange={handleContactChange} />
+                  </div>
+                  <div className="mb-3">
+                      <label className="text-white-50 small">Message</label>
+                      <textarea className="form-control bg-black text-white border-secondary" rows="4" name="cMessage" value={formData.cMessage} onChange={handleContactChange}></textarea>
+                  </div>
+                  <button type="submit" className="btn btn-warning w-100 text-uppercase fw-bold">Send Message</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="pt-5 pb-4" style={{ backgroundColor: '#000', borderTop: '1px solid #222' }}>
+          <div className="container">
+            <div className="row">
+              <div className="col-lg-5 mb-5 mb-lg-0">
+                 <h3 className="fw-normal mb-4 text-white" style={{ fontFamily: 'Georgia, serif', letterSpacing: '2px' }}>
+                   STUDIO
+                 </h3>
+                 <p className="text-white-50 small mb-4" style={{ maxWidth: '350px', lineHeight: '1.8' }}>
+                   Capturing moments that last a lifetime. Professional photography for all occasions.
+                 </p>
+                 <div className="d-flex gap-4">
+                   <a href="#" className="text-white-50"><i className="fab fa-instagram fa-lg"></i></a>
+                   <a href="#" className="text-white-50"><i className="fab fa-facebook-f fa-lg"></i></a>
+                   <a href="#" className="text-white-50"><i className="fab fa-twitter fa-lg"></i></a>
+                 </div>
+              </div>
+              <div className="col-lg-3 col-6">
+                <h6 className="text-white fw-bold mb-4 small">Quick Links</h6>
+                <ul className="list-unstyled small text-white-50 d-grid gap-3">
+                  <li><a href="#home" className="text-white-50 text-decoration-none">Home</a></li>
+                  <li><a href="#about" className="text-white-50 text-decoration-none">About</a></li>
+                  <li><a href="#portfolio" className="text-white-50 text-decoration-none">Portfolio</a></li>
+                  <li><a href="#contact" className="text-white-50 text-decoration-none">Contact</a></li>
+                </ul>
+              </div>
+              <div className="col-lg-4 col-6">
+                 <h6 className="text-white fw-bold mb-4 small">Newsletter</h6>
+                 <p className="text-white-50 small">Subscribe for latest updates and offers.</p>
+                 <div className="input-group mb-3">
+                   <input type="text" className="form-control bg-dark text-white border-secondary" placeholder="Email Address" />
+                   <button className="btn btn-warning" type="button">Go</button>
+                 </div>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-top border-secondary">
+               <small className="text-white-50">&copy; 2026 Studio Inc. All Rights Reserved.</small>
+            </div>
+          </div>
+        </footer>
+
+      </div>
     </div>
   );
 };
 
 Landing.propTypes = {
   onLoginClick: PropTypes.func.isRequired,
-  onShopClick: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
+  onDashboardClick: PropTypes.func,
   user: PropTypes.string
 };
 
