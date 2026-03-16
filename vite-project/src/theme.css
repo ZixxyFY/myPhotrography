@@ -1,0 +1,743 @@
+/* =============================================================
+   THEME.CSS — Global Design System
+   E-Imagination Photography Platform
+   Provides unified design tokens and utility classes across:
+     - Landing Page (public)
+     - User Dashboard
+     - Admin Dashboard
+   ============================================================= */
+
+/* ─── 1. GOOGLE FONTS — INTER ──────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ─── 2. DESIGN TOKENS (CSS VARIABLES) ─────────────────────── */
+:root {
+  /* Brand Colors */
+  --color-primary:        #2563EB;
+  --color-primary-hover:  #1D4ED8;
+  --color-secondary:      #0F172A;
+  --color-accent:         #F59E0B;
+
+  /* Neutral Palette */
+  --color-bg:             #F8FAFC;
+  --color-card-bg:        #FFFFFF;
+  --color-border:         #E5E7EB;
+  --color-text-main:      #111827;
+  --color-text-muted:     #6B7280;
+
+  /* Status Colors */
+  --color-success:        #10B981;
+  --color-success-bg:     #ECFDF5;
+  --color-danger:         #EF4444;
+  --color-danger-bg:      #FEF2F2;
+  --color-warning:        #F59E0B;
+  --color-warning-bg:     #FFFBEB;
+  --color-info:           #3B82F6;
+  --color-info-bg:        #EFF6FF;
+
+  /* Typography */
+  --font-base:            'Inter', system-ui, -apple-system, sans-serif;
+  --font-display:         'Inter', system-ui, -apple-system, sans-serif;
+  --font-size-xs:         0.75rem;   /* 12px */
+  --font-size-sm:         0.875rem;  /* 14px */
+  --font-size-base:       1rem;      /* 16px */
+  --font-size-lg:         1.125rem;  /* 18px */
+  --font-size-xl:         1.25rem;   /* 20px */
+  --font-weight-normal:   400;
+  --font-weight-medium:   500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:     700;
+
+  /* Spacing Scale */
+  --space-xs:    4px;
+  --space-sm:    8px;
+  --space-md:    16px;
+  --space-lg:    24px;
+  --space-xl:    32px;
+  --space-2xl:   40px;
+  --space-3xl:   48px;
+
+  /* Border Radius */
+  --radius-sm:   6px;
+  --radius-md:   12px;    /* ← Card default */
+  --radius-lg:   16px;
+  --radius-full: 9999px;  /* pill */
+
+  /* Shadows */
+  --shadow-xs:  0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm:  0 1px 3px 0 rgba(0, 0, 0, 0.10), 0 1px 2px -1px rgba(0, 0, 0, 0.10);
+  --shadow-md:  0 4px 6px -1px rgba(0, 0, 0, 0.10), 0 2px 4px -2px rgba(0, 0, 0, 0.10);
+  --shadow-lg:  0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -4px rgba(0, 0, 0, 0.10);
+  --shadow-xl:  0 20px 25px -5px rgba(0, 0, 0, 0.10), 0 8px 10px -6px rgba(0, 0, 0, 0.10);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
+
+  /* Sidebar */
+  --sidebar-width:     268px;
+  --sidebar-bg:        #FFFFFF;
+  --sidebar-border:    #E5E7EB;
+  --sidebar-active-bg: #EFF6FF;
+  --sidebar-active-color: var(--color-primary);
+  --sidebar-icon-size: 20px;
+  --sidebar-item-radius: var(--radius-sm);
+
+  /* Topbar */
+  --topbar-height: 68px;
+  --topbar-bg:     #FFFFFF;
+
+  /* Transitions */
+  --transition-fast:   all 0.15s ease;
+  --transition-normal: all 0.25s ease;
+}
+
+/* ─── 3. GLOBAL BASE STYLES ─────────────────────────────────── */
+
+/* Apply Inter to all dashboard/auth pages — Landing overrides with its own scope */
+.ds-scope,
+.ds-sidebar,
+.ds-topbar,
+.auth-card,
+.dashboard-card,
+.card-modern {
+  font-family: var(--font-base);
+}
+
+/* Body-level Inter for dashboard pages */
+body.dashboard-body {
+  font-family: var(--font-base);
+  background-color: var(--color-bg);
+  color: var(--color-text-main);
+}
+
+/* ─── 4. OVERRIDE BOOTSTRAP PRIMARY COLOR ────────────────────── */
+/* These override Bootstrap's default blue with our brand blue */
+.btn-primary {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: #ffffff !important;
+  font-family: var(--font-base) !important;
+  font-weight: var(--font-weight-semibold) !important;
+}
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--color-primary-hover) !important;
+  border-color: var(--color-primary-hover) !important;
+}
+.btn-outline-primary {
+  color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+.btn-outline-primary:hover {
+  background-color: var(--color-primary) !important;
+  color: #ffffff !important;
+}
+.text-primary {
+  color: var(--color-primary) !important;
+}
+.bg-primary {
+  background-color: var(--color-primary) !important;
+}
+
+/* ─── 5. BUTTON DESIGN SYSTEM ────────────────────────────────── */
+
+/* Primary Button */
+.btn-ds-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  padding: 10px 24px;
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-ds-primary:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.btn-ds-primary:active {
+  transform: translateY(0);
+}
+
+/* Secondary Button (Dark) */
+.btn-ds-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  background-color: var(--color-secondary);
+  color: #ffffff;
+  border: 1.5px solid var(--color-secondary);
+  border-radius: var(--radius-full);
+  padding: 10px 24px;
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+.btn-ds-secondary:hover {
+  background-color: #1E293B;
+  border-color: #1E293B;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Outline Button */
+.btn-ds-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  padding: 10px 24px;
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+.btn-ds-outline:hover {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+/* Gold accent button (Landing Page CTA) */
+.btn-ds-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  background-color: var(--color-accent);
+  color: var(--color-secondary);
+  border: 1.5px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  padding: 10px 24px;
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+.btn-ds-gold:hover {
+  background-color: #D97706;
+  border-color: #D97706;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Fix: btn-gold was previously undefined, map it to btn-ds-gold visually */
+.btn-gold {
+  background-color: var(--color-accent) !important;
+  color: var(--color-secondary) !important;
+  border-color: var(--color-accent) !important;
+  font-family: var(--font-base) !important;
+  font-weight: var(--font-weight-bold) !important;
+}
+.btn-gold:hover {
+  background-color: #D97706 !important;
+  border-color: #D97706 !important;
+  color: #ffffff !important;
+}
+
+/* ─── 6. CARD DESIGN SYSTEM ──────────────────────────────────── */
+
+/* Modern Card — base class used across all modules */
+.card-modern {
+  background-color: var(--color-card-bg);
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-card) !important;
+  transition: var(--transition-normal);
+  overflow: hidden;
+}
+.card-modern:hover {
+  box-shadow: var(--shadow-md) !important;
+  transform: translateY(-2px);
+}
+
+/* Dashboard Metric Card */
+.dashboard-card {
+  background-color: var(--color-card-bg);
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-card) !important;
+  padding: var(--space-lg);
+  transition: var(--transition-normal);
+  font-family: var(--font-base);
+}
+.dashboard-card:hover {
+  box-shadow: var(--shadow-md) !important;
+  transform: translateY(-2px);
+  border-color: #D1D5DB !important;
+}
+
+/* Auth Card — Login / Registration */
+.auth-card {
+  background-color: var(--color-card-bg);
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-lg) !important;
+  overflow: hidden;
+}
+
+/* Standardize all Bootstrap cards within dashboards */
+.d-flex.min-vh-100.bg-light .card,
+.d-flex.bg-light.min-vh-100 .card {
+  border-radius: var(--radius-md) !important;
+  border-color: var(--color-border) !important;
+  font-family: var(--font-base) !important;
+}
+
+/* ─── 7. STATUS BADGES ───────────────────────────────────────── */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-base);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+/* New — Yellow */
+.status-badge--new,
+.status-badge[data-status="New"] {
+  background-color: var(--color-warning-bg);
+  color: #92400E;
+  border: 1px solid #FCD34D;
+}
+
+/* Confirmed — Blue */
+.status-badge--confirmed,
+.status-badge[data-status="Confirmed"] {
+  background-color: var(--color-info-bg);
+  color: #1D4ED8;
+  border: 1px solid #93C5FD;
+}
+
+/* Completed — Green */
+.status-badge--completed,
+.status-badge[data-status="Completed"] {
+  background-color: var(--color-success-bg);
+  color: #065F46;
+  border: 1px solid #6EE7B7;
+}
+
+/* Cancelled — Red */
+.status-badge--cancelled,
+.status-badge[data-status="Cancelled"] {
+  background-color: var(--color-danger-bg);
+  color: #991B1B;
+  border: 1px solid #FCA5A5;
+}
+
+/* Override Bootstrap Badge subtle variants to match our system */
+.badge.bg-warning-subtle  { background-color: var(--color-warning-bg) !important; color: #92400E !important; border: 1px solid #FCD34D; }
+.badge.bg-info-subtle     { background-color: var(--color-info-bg) !important;    color: #1D4ED8 !important; border: 1px solid #93C5FD; }
+.badge.bg-success-subtle  { background-color: var(--color-success-bg) !important; color: #065F46 !important; border: 1px solid #6EE7B7; }
+.badge.bg-danger-subtle   { background-color: var(--color-danger-bg) !important;  color: #991B1B !important; border: 1px solid #FCA5A5; }
+
+/* ─── 8. SIDEBAR ─────────────────────────────────────────────── */
+
+.ds-sidebar {
+  width: var(--sidebar-width) !important;
+  min-width: var(--sidebar-width) !important;
+  background-color: var(--sidebar-bg) !important;
+  border-right: 1px solid var(--sidebar-border) !important;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  font-family: var(--font-base);
+}
+
+/* Sidebar Brand/Logo Area */
+.ds-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg) var(--space-md);
+  margin-bottom: var(--space-md);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  color: var(--color-primary);
+  font-family: var(--font-base);
+  letter-spacing: -0.02em;
+}
+
+/* Sidebar Nav Items */
+.ds-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 10px var(--space-md);
+  border-radius: var(--sidebar-item-radius);
+  color: var(--color-text-muted);
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 2px;
+}
+.ds-nav-link:hover {
+  background-color: var(--color-bg);
+  color: var(--color-text-main);
+}
+.ds-nav-link.active,
+.ds-nav-link.active:hover {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-active-color);
+  font-weight: var(--font-weight-semibold);
+}
+.ds-nav-link .ds-nav-icon {
+  width: var(--sidebar-icon-size);
+  height: var(--sidebar-icon-size);
+  flex-shrink: 0;
+}
+
+/* Admin Dashboard SidebarItem override (uses .sidebar-link class) */
+.sidebar-link {
+  font-family: var(--font-base) !important;
+  border-radius: var(--sidebar-item-radius) !important;
+  transition: var(--transition-fast) !important;
+}
+.sidebar-link.active {
+  background-color: var(--sidebar-active-bg) !important;
+  color: var(--sidebar-active-color) !important;
+}
+.sidebar-link:not(.active):hover {
+  background-color: var(--color-bg) !important;
+  color: var(--color-text-main) !important;
+}
+
+/* Section label in sidebar */
+.ds-sidebar-section-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: var(--space-sm) var(--space-md);
+  margin-top: var(--space-md);
+}
+
+/* ─── 9. TOPBAR / TOP NAVIGATION ─────────────────────────────── */
+
+.ds-topbar {
+  background-color: var(--topbar-bg) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  height: var(--topbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-lg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  font-family: var(--font-base);
+  box-shadow: var(--shadow-xs) !important;
+}
+
+/* Search Input */
+.ds-search-input {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 8px var(--space-md);
+  width: 280px;
+  transition: var(--transition-fast);
+}
+.ds-search-input:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background-color: var(--color-card-bg);
+}
+.ds-search-input input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-main);
+  width: 100%;
+}
+.ds-search-input input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* ─── 10. TABLES ─────────────────────────────────────────────── */
+
+.ds-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+}
+.ds-table thead tr th {
+  background-color: var(--color-bg) !important;
+  color: var(--color-text-muted) !important;
+  font-size: var(--font-size-xs) !important;
+  font-weight: var(--font-weight-semibold) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  padding: 14px var(--space-md) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  white-space: nowrap;
+}
+.ds-table tbody tr td {
+  padding: 14px var(--space-md) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  color: var(--color-text-main);
+  vertical-align: middle;
+}
+.ds-table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+.ds-table tbody tr:hover td {
+  background-color: #FAFAFA;
+}
+
+/* Bootstrap table override within dashboard scope */
+.d-flex.bg-light.min-vh-100 table thead,
+.d-flex.min-vh-100.bg-light table thead {
+  background-color: var(--color-bg) !important;
+}
+.d-flex.bg-light.min-vh-100 table thead th,
+.d-flex.min-vh-100.bg-light table thead th {
+  font-family: var(--font-base) !important;
+  font-size: var(--font-size-xs) !important;
+  font-weight: var(--font-weight-semibold) !important;
+  color: var(--color-text-muted) !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* ─── 11. FORMS ──────────────────────────────────────────────── */
+
+.ds-form-control,
+.ds-scope .form-control,
+.auth-card .form-control {
+  font-family: var(--font-base) !important;
+  font-size: var(--font-size-sm) !important;
+  border: 1.5px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 10px var(--space-md) !important;
+  color: var(--color-text-main) !important;
+  background-color: var(--color-card-bg) !important;
+  transition: var(--transition-fast) !important;
+  box-shadow: none !important;
+}
+.ds-form-control:focus,
+.ds-scope .form-control:focus,
+.auth-card .form-control:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10) !important;
+  outline: none !important;
+}
+.ds-form-control::placeholder,
+.ds-scope .form-control::placeholder,
+.auth-card .form-control::placeholder {
+  color: #9CA3AF !important;
+}
+
+/* Form Labels */
+.ds-scope .form-label,
+.auth-card .form-label,
+.auth-card label {
+  font-family: var(--font-base) !important;
+  font-size: var(--font-size-sm) !important;
+  font-weight: var(--font-weight-medium) !important;
+  color: var(--color-text-main) !important;
+  margin-bottom: 6px !important;
+}
+
+/* ─── 12. MODALS ─────────────────────────────────────────────── */
+
+.modal-content {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-xl) !important;
+  font-family: var(--font-base) !important;
+  overflow: hidden;
+}
+.modal-header {
+  border-bottom: 1px solid var(--color-border) !important;
+  padding: var(--space-lg) !important;
+}
+.modal-footer {
+  border-top: 1px solid var(--color-border) !important;
+  padding: var(--space-md) var(--space-lg) !important;
+}
+.modal-body {
+  padding: var(--space-lg) !important;
+  font-family: var(--font-base) !important;
+}
+.modal-title {
+  font-family: var(--font-base) !important;
+  font-weight: var(--font-weight-semibold) !important;
+  font-size: var(--font-size-lg) !important;
+  color: var(--color-text-main) !important;
+}
+
+/* ─── 13. LAYOUT UTILITIES ───────────────────────────────────── */
+
+/* Page wrapper for dashboard content area */
+.page-container {
+  padding: var(--space-xl) var(--space-2xl);
+  max-width: 100%;
+  font-family: var(--font-base);
+}
+
+/* Section title pattern */
+.section-title {
+  font-family: var(--font-base);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-main);
+  margin-bottom: var(--space-lg);
+  letter-spacing: -0.02em;
+}
+.section-title .section-subtitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+/* Body background for dashboard views */
+.ds-layout {
+  background-color: var(--color-bg);
+  min-height: 100vh;
+  font-family: var(--font-base);
+}
+
+/* ─── 14. AVATAR / USER ICON ─────────────────────────────────── */
+
+.ds-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-base);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+/* ─── 15. MICRO-ANIMATIONS ───────────────────────────────────── */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in, .animate-fade-in {
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+/* Hover scale for stat cards */
+.hover-scale {
+  transition: var(--transition-normal);
+}
+.hover-scale:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* ─── 16. NOTIFICATION DOT ───────────────────────────────────── */
+
+.ds-notif-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-danger);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-card-bg);
+}
+
+/* ─── 17. DROPDOWN MENU ──────────────────────────────────────── */
+
+.dropdown-menu {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-lg) !important;
+  font-family: var(--font-base) !important;
+  padding: var(--space-sm) !important;
+  font-size: var(--font-size-sm) !important;
+}
+.dropdown-item {
+  border-radius: var(--radius-sm) !important;
+  padding: 8px var(--space-md) !important;
+  color: var(--color-text-main) !important;
+  font-weight: var(--font-weight-medium) !important;
+  transition: var(--transition-fast) !important;
+}
+.dropdown-item:hover {
+  background-color: var(--color-bg) !important;
+  color: var(--color-primary) !important;
+}
+.dropdown-item.text-danger:hover {
+  background-color: var(--color-danger-bg) !important;
+  color: var(--color-danger) !important;
+}
+
+/* ─── 18. SCROLLBAR ──────────────────────────────────────────── */
+
+.ds-sidebar::-webkit-scrollbar { width: 4px; }
+.ds-sidebar::-webkit-scrollbar-track { background: transparent; }
+.ds-sidebar::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+.ds-sidebar::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
+
+/* ─── 19. RESPONSIVE ADJUSTMENTS ────────────────────────────── */
+
+@media (max-width: 991.98px) {
+  .ds-sidebar {
+    display: none !important;
+  }
+  .page-container {
+    padding: var(--space-md);
+  }
+}
+
+/* ─── 20. LANDING–SPECIFIC SCOPING ──────────────────────────── */
+/* Landing page keeps its dark artistic design; only spacing is unified */
+#home, #about, #portfolio, #contact {
+  --space-section: var(--space-2xl);
+}

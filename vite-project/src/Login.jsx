@@ -51,19 +51,19 @@ const Login = ({ onBack, onRegisterClick, onLoginSuccess }) => {
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-md-6 col-lg-4">
-            <div className="card shadow-lg border-0 rounded-3">
+            <div className="card shadow-lg border-0 rounded-3 auth-card">
               <div className="card-body p-5">
                 <div className="text-center mb-4">
                   <h3 className="fw-bold mb-3">{role === 'user' ? 'Client Login' : 'Admin Portal'}</h3>
                   <div className="btn-group w-100" role="group">
                     <button 
                       type="button" 
-                      className={`btn ${role === 'user' ? 'btn-primary' : 'btn-outline-primary'}`}
+                      className={`btn btn-sm ${role === 'user' ? 'btn-ds-primary' : 'btn-outline-secondary'}`}
                       onClick={() => handleRoleSwitch('user')}
                     >User</button>
                     <button 
                       type="button" 
-                      className={`btn ${role === 'admin' ? 'btn-dark' : 'btn-outline-dark'}`}
+                      className={`btn btn-sm ${role === 'admin' ? 'btn-ds-secondary' : 'btn-outline-secondary'}`}
                       onClick={() => handleRoleSwitch('admin')}
                     >Admin</button>
                   </div>
@@ -91,13 +91,13 @@ const Login = ({ onBack, onRegisterClick, onLoginSuccess }) => {
                     placeholder="123456"
                     required={true}
                   />
-                  <button type="submit" className={`btn w-100 mb-3 ${role === 'user' ? 'btn-primary' : 'btn-dark'}`}>
+                  <button type="submit" className={`btn-ds-primary w-100 mb-3`}>
                     Login as {role === 'user' ? 'Client' : 'Admin'}
                   </button>
                 </form>
                 
                 <div className="text-center">
-                  <button onClick={onRegisterClick} className="btn btn-link text-decoration-none small text-gold">
+                  <button onClick={onRegisterClick} className="btn btn-link text-decoration-none small text-primary">
                     Create Account
                   </button>
                   <br/>

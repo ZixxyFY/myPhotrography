@@ -1,3 +1,6 @@
+/* ─── App.css ─── Landing-page-specific layout styles only.
+   Design tokens and component styles → theme.css */
+
 #root {
   max-width: 100% !important;
   width: 100% !important;
@@ -7,15 +10,12 @@
   text-align: left !important;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@700&display=swap');
-
+/* ─── Landing page dark overlay variable ─── */
 :root {
-  --primary-color: #d4a373; /* Gold Tone */
   --dark-overlay: rgba(0, 0, 0, 0.6);
 }
 
 body {
-  font-family: 'Montserrat', sans-serif;
   line-height: 1.7;
   color: #333;
   overflow-x: hidden;
@@ -23,8 +23,10 @@ body {
   padding: 0;
 }
 
-h1, h2, h3, h4, .navbar-brand {
-  font-family: 'Playfair Display', serif;
+/* Landing page headings — Inter bold for consistency */
+.hero-section h1,
+.hero-section h2 {
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
 .text-gold {
@@ -87,19 +89,8 @@ h1, h2, h3, h4, .navbar-brand {
   filter: brightness(0.8);
 }
 
-/* Form Styling */
-.form-control {
-  border-radius: 0;
+/* Landing contact form inputs — dark theme specific */
+#contact .form-control {
+  border-radius: 4px;
   padding: 12px;
-}
-
-.btn-primary {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-  border-radius: 30px;
-}
-
-.btn-primary:hover {
-  background-color: #b08d55;
-  border-color: #b08d55;
 }

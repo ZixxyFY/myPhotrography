@@ -6,6 +6,7 @@ import RentalShop from './RentalShop';
 import Dashboard from './Dashboard';    
 import UserDashboard from './UserDashboard'; 
 import './App.css'; 
+import './theme.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {

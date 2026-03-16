@@ -34,7 +34,7 @@ class Registration extends Component {
         <div className="container">
           <div className="row justify-content-center">
             <div className="col-md-6 col-lg-4">
-              <div className="card shadow-lg border-0 rounded-3">
+              <div className="card shadow-lg border-0 rounded-3 auth-card">
                 <div className="card-body p-5">
                   <h3 className="fw-bold mb-3 text-center">Sign Up</h3>
                   
@@ -81,13 +81,13 @@ class Registration extends Component {
                       errorMsg="Password must be min 8 chars, with at least 1 letter, 1 special character and 1 number."
                     />
 
-                    <button type="submit" className="btn btn-primary w-100 mb-3">
+                    <button type="submit" className="btn-ds-primary w-100 mb-3">
                       Register
                     </button>
                   </form>
                   
                   <div className="text-center">
-                    <button onClick={onLoginClick} className="btn btn-link text-decoration-none small text-gold">
+                    <button onClick={onLoginClick} className="btn btn-link text-decoration-none small text-primary">
                       Already have an account? Login
                     </button>
                     <br/>

@@ -45,7 +45,13 @@ const StatusBadge = ({ status }) => {
   if (status === 'Cancelled') variant = 'danger';
   
   return (
-    <Badge bg={`${variant}-subtle`} text={variant === 'light' ? 'dark' : variant} className="px-3 py-2 rounded-pill fw-bold" style={{fontFamily: 'sans-serif'}}>
+    <Badge 
+      bg={`${variant}-subtle`} 
+      text={variant === 'light' ? 'dark' : variant} 
+      className="px-3 py-2 rounded-pill fw-bold status-badge" 
+      data-status={status}
+      style={{fontFamily: 'var(--font-base)'}}
+    >
       {status}
     </Badge>
   );
@@ -198,7 +204,7 @@ const Dashboard = ({ user, onLogout }) => {
               <Card.Header className="bg-white p-4 border-bottom-0 d-flex justify-content-between align-items-center">
                 <h5 className="mb-0 fw-bold">{isDashboard ? 'Recent Orders' : 'Order List'}</h5>
               </Card.Header>
-              <Table responsive hover className="m-0 align-middle table-borderless">
+              <Table responsive hover className="m-0 align-middle table-borderless ds-table">
                 <thead className="bg-light text-muted small text-uppercase fw-bold border-bottom">
                   <tr>
                     <th className="py-3 ps-4">Order ID</th>
@@ -295,12 +301,12 @@ const Dashboard = ({ user, onLogout }) => {
   };
 
   return (
-    <div className="d-flex bg-light min-vh-100 font-sans text-dark">
+    <div className="d-flex bg-light min-vh-100 font-sans text-dark ds-layout">
       
       {/* SIDEBAR */}
       <div className="bg-white border-end d-none d-lg-block sticky-top" style={{ width: '280px', height: '100vh', overflowY: 'auto' }}>
         <div className="p-4 mb-2">
-          <h4 className="fw-bold d-flex align-items-center gap-2 text-primary" style={{ letterSpacing: '-0.5px', fontFamily: 'sans-serif' }}>
+          <h4 className="fw-bold d-flex align-items-center gap-2 text-primary" style={{ letterSpacing: '-0.5px', fontFamily: 'var(--font-base)' }}>
             <Camera size={28} /> LensDash
           </h4>
         </div>

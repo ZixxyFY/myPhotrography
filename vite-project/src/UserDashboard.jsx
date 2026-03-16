@@ -57,19 +57,19 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
   ];
 
   return (
-    <div className="bg-white border-end d-flex flex-column flex-shrink-0 p-3" style={{width: '260px', height: '100vh', position: 'sticky', top: 0}}>
+    <div className="bg-white border-end d-flex flex-column flex-shrink-0 p-3 ds-sidebar" style={{height: '100vh', position: 'sticky', top: 0}}>
       <div className="mb-5 px-2 d-flex align-items-center">
-        <i className="fas fa-camera-retro fa-lg text-gold me-2"></i>
-        <h5 className="fw-bold mb-0">E-Imagination</h5>
+        <i className="fas fa-camera-retro fa-lg text-primary me-2"></i>
+        <h5 className="fw-bold mb-0" style={{fontFamily: 'var(--font-base)', color: 'var(--color-text-main)'}}>E-Imagination</h5>
       </div>
-      <ul className="nav nav-pills flex-column mb-auto">
+      <ul className="nav flex-column mb-auto">
         {menuItems.map(item => (
-          <li className="nav-item mb-2" key={item.id}>
+          <li className="nav-item mb-1" key={item.id}>
             <button 
               onClick={() => setActiveTab(item.id)}
-              className={`nav-link w-100 text-start fw-bold ${activeTab === item.id ? 'active bg-dark text-gold' : 'text-muted'}`}
+              className={`ds-nav-link ${activeTab === item.id ? 'active' : ''}`}
             >
-              <i className={`fas ${item.icon} me-3`} style={{width: '20px'}}></i> {item.label}
+              <i className={`fas ${item.icon} me-3`} style={{width: '20px', color: 'inherit'}}></i> {item.label}
             </button>
           </li>
         ))}
@@ -110,11 +110,11 @@ const DashboardStats = () => (
   <div className="row g-4 mb-4">
     {db.stats.map((stat, idx) => (
       <div className="col-md-3" key={idx}>
-        <div className="card border-0 shadow-sm rounded-4 h-100 p-3 hover-scale">
+        <div className="card border-0 shadow-sm rounded-4 h-100 p-3 hover-scale dashboard-card">
           <div className="d-flex justify-content-between align-items-start">
             <div>
-              <p className="text-muted small fw-bold text-uppercase mb-1">{stat.label}</p>
-              <h3 className="fw-bold mb-0">{stat.value}</h3>
+              <p className="text-muted small fw-bold text-uppercase mb-1" style={{fontFamily: 'var(--font-base)', fontSize: 'var(--font-size-xs)'}}>{stat.label}</p>
+              <h3 className="fw-bold mb-0" style={{fontFamily: 'var(--font-base)'}}>{stat.value}</h3>
             </div>
             <div className={`bg-${stat.color} bg-opacity-10 p-3 rounded-circle text-${stat.color}`}>
               <i className={`fas ${stat.icon} fa-lg`}></i>
@@ -227,7 +227,7 @@ const BookingView = () => (
     <div className="row g-4">
       {db.photographers.map(p => (
         <div className="col-md-6" key={p.id}>
-          <div className="card border-0 shadow-sm h-100">
+          <div className="card border-0 shadow-sm h-100 card-modern">
             <div className="d-flex p-3 align-items-center">
               <img src={p.img} className="rounded-circle me-3" style={{width: '80px', height: '80px', objectFit: 'cover'}} alt={p.name} />
               <div>
@@ -250,7 +250,7 @@ const RentalView = () => (
     <div className="row g-4">
       {db.equipment.map(e => (
         <div className="col-md-4" key={e.id}>
-          <div className="card border-0 shadow-sm h-100">
+          <div className="card border-0 shadow-sm h-100 card-modern">
             <img src={e.img} className="card-img-top" style={{height: '180px', objectFit: 'cover'}} alt={e.name} />
             <div className="card-body">
               <h5 className="fw-bold">{e.name}</h5>
@@ -280,7 +280,7 @@ const UserDashboard = ({ user, onLogout }) => {
   };
 
   return (
-    <div className="d-flex min-vh-100 bg-light">
+    <div className="d-flex min-vh-100 bg-light ds-layout">
       {/* 1. SIDEBAR */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={onLogout} />
 
@@ -339,7 +339,7 @@ const UserDashboard = ({ user, onLogout }) => {
       {/* FLOATING CTA */}
       <div className="position-fixed bottom-0 end-0 p-4" style={{zIndex: 100}}>
         <button 
-            className="btn btn-gold btn-lg shadow-lg rounded-pill fw-bold text-uppercase px-4"
+            className="btn btn-ds-gold btn-lg shadow-lg rounded-pill fw-bold text-uppercase px-4"
             onClick={() => setActiveTab('book')}
         >
           <i className="fas fa-plus me-2"></i> Book Now
