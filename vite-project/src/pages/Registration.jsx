@@ -17,13 +17,45 @@ class Registration extends Component {
   }
 
   // Hard Coded Registration Logic
-  handleSubmit = (e) => {
-    e.preventDefault();
-    // In a real app, you would send this.state data to a server here.
-    
-    alert(`Account created for ${this.state.fullName}! Please Login.`);
-    this.props.onLoginClick(); // Redirect to Login page
+  handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch('http://localhost:5000/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        fullName: this.state.fullName,
+        email: this.state.email,
+        password: this.state.password
+      })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert(data.message);
+
+      // Clear form after successful registration
+      this.setState({
+        fullName: '',
+        email: '',
+        password: ''
+      });
+
+      // Go to login page
+      this.props.onLoginClick();
+    } else {
+      alert(data.message);
+    }
+
+  } catch (error) {
+    console.error('Registration Error:', error);
+    alert('Something went wrong. Please try again.');
   }
+}
 
   render() {
     const { onBack, onLoginClick } = this.props;
