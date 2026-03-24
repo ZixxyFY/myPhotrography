@@ -1,0 +1,48 @@
+diff --git a/vite-project/src/RentalShop.jsx b/vite-project/src/RentalShop.jsx
+index 4eb2cf79..b7ba340d 100644
+--- a/vite-project/src/RentalShop.jsx
++++ b/vite-project/src/RentalShop.jsx
+@@ -42,7 +42,7 @@ class RentalShop extends Component {
+         <nav className="navbar navbar-dark bg-black sticky-top shadow-sm">
+           <div className="container">
+             <span className="navbar-brand mb-0 h1 fw-bold">
+-              <i className="fas fa-camera-retro me-2 text-gold"></i>Rental Store
++              <i className="fas fa-camera-retro me-2 text-warning"></i>Rental Store
+             </span>
+             <button onClick={onBack} className="btn btn-outline-light btn-sm rounded-pill">
+               <i className="fas fa-arrow-left me-2"></i>Back to Home
+@@ -63,7 +63,7 @@ class RentalShop extends Component {
+           <div className="row g-4">
+             {rentalItems.map((item) => (
+               <div key={item.id} className="col-md-6 col-lg-4">
+-                <div className="card h-100 border-0 shadow-sm service-card">
++                <div className="card h-100 border-0 shadow-sm card-modern">
+                   <div style={{height: '200px', overflow: 'hidden'}}>
+                      {/* Added transition for hover effect if you add CSS for it later */}
+                      <img 
+@@ -75,10 +75,10 @@ class RentalShop extends Component {
+                   </div>
+                   <div className="card-body text-center p-4">
+                     <h5 className="card-title fw-bold">{item.name}</h5>
+-                    <h6 className="text-gold fw-bold mb-3">₹{item.price} / day</h6>
++                    <h6 className="text-warning fw-bold mb-3">₹{item.price} / day</h6>
+                     <button 
+                       onClick={() => this.handleRent(item.name)}
+-                      className="btn btn-dark w-100 rounded-pill"
++                      className="btn btn-ds-primary w-100 rounded-pill"
+                     >
+                       Rent Now
+                     </button>
+diff --git a/vite-project/src/UserDashboard.jsx b/vite-project/src/UserDashboard.jsx
+index 2962c079..72dcffd5 100644
+--- a/vite-project/src/UserDashboard.jsx
++++ b/vite-project/src/UserDashboard.jsx
+@@ -285,7 +285,7 @@ const UserDashboard = ({ user, onLogout }) => {
+       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={onLogout} />
+ 
+       {/* 2. MAIN CONTENT */}
+-      <div className="flex-grow-1 p-4 p-lg-5 overflow-auto">
++      <div className="flex-grow-1 p-4 p-lg-5 overflow-auto pb-5 mb-5">
+         <Topbar user={{...db.user, name: user || db.user.name}} />
+ 
+         {/* DYNAMIC CONTENT SWITCHER */}

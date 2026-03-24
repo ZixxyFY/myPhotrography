@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import FormInput from './FormInput'; // Import the reusable component
+import FormInput from '../components/FormInput'; // Import the reusable component
 
 class Registration extends Component {
   constructor(props) {

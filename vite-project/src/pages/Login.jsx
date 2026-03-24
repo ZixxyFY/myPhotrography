@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import FormInput from './FormInput'; 
+import FormInput from '../components/FormInput';
 
 const Login = ({ onBack, onRegisterClick, onLoginSuccess }) => {
   // 1. Initialize State using Hooks
@@ -21,28 +21,25 @@ const Login = ({ onBack, onRegisterClick, onLoginSuccess }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Hardcoded Credentials
-    const validUserEmail = "user@test.com";
-    const validAdminEmail = "admin@test.com";
-    const validPass = "123456";
-
+    // Role-based logic determined by email content
+    let detectedRole = email.toLowerCase().includes('admin') ? 'admin' : 'user';
     let isAuthenticated = false;
     let username = "";
 
-    // Check Logic
-    if (role === 'user' && email === validUserEmail && password === validPass) {
+    // Simple mock authentication success regardless of password since it's mock
+    if (detectedRole === 'admin') {
       isAuthenticated = true;
-      username = "John Doe"; 
-    } else if (role === 'admin' && email === validAdminEmail && password === validPass) {
+      username = "Admin";
+    } else {
       isAuthenticated = true;
-      username = "Admin User";
+      username = "Client User";
     }
 
     // Result
     if (isAuthenticated) {
-      onLoginSuccess(username, role); // Call parent function
+      onLoginSuccess(username, detectedRole); // Call parent function
     } else {
-      setError(`Invalid ${role} credentials!`);
+      setError(`Invalid credentials!`);
     }
   };
 

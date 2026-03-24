@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import Sidebar from '../../components/Sidebar';
+import BookPhotographer from './BookPhotographer';
+import EquipmentRental from './EquipmentRental';
+import MyBookings from './MyBookings';
+import Profile from './Profile';
 
 // --- MOCK DATABASE (With STABLE Image URLs) ---
 const db = {
@@ -46,42 +51,7 @@ const db = {
 
 // --- SUB-COMPONENTS ---
 
-const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
-  const menuItems = [
-    { id: 'dashboard', icon: 'fa-th-large', label: 'Dashboard' },
-    { id: 'book', icon: 'fa-user-plus', label: 'Book Photographer' },
-    { id: 'my-bookings', icon: 'fa-calendar-alt', label: 'My Bookings' },
-    { id: 'rent', icon: 'fa-camera-retro', label: 'Rent Equipment' },
-    { id: 'my-rentals', icon: 'fa-box-open', label: 'My Rentals' },
-    { id: 'profile', icon: 'fa-user-cog', label: 'Profile' },
-  ];
 
-  return (
-    <div className="bg-white border-end d-flex flex-column flex-shrink-0 p-3 ds-sidebar" style={{height: '100vh', position: 'sticky', top: 0}}>
-      <div className="mb-5 px-2 d-flex align-items-center">
-        <i className="fas fa-camera-retro fa-lg text-primary me-2"></i>
-        <h5 className="fw-bold mb-0" style={{fontFamily: 'var(--font-base)', color: 'var(--color-text-main)'}}>E-Imagination</h5>
-      </div>
-      <ul className="nav flex-column mb-auto">
-        {menuItems.map(item => (
-          <li className="nav-item mb-1" key={item.id}>
-            <button 
-              onClick={() => setActiveTab(item.id)}
-              className={`ds-nav-link ${activeTab === item.id ? 'active' : ''}`}
-            >
-              <i className={`fas ${item.icon} me-3`} style={{width: '20px', color: 'inherit'}}></i> {item.label}
-            </button>
-          </li>
-        ))}
-      </ul>
-      <div className="mt-auto border-top pt-3">
-        <button onClick={onLogout} className="btn btn-link text-danger text-decoration-none fw-bold small">
-          <i className="fas fa-sign-out-alt me-2"></i> Log Out
-        </button>
-      </div>
-    </div>
-  );
-};
 
 const Topbar = ({ user }) => (
   <div className="d-flex justify-content-between align-items-center mb-5">
@@ -219,53 +189,7 @@ const ActivityTimeline = () => (
   </div>
 );
 
-// --- NEW SUB-COMPONENTS FOR INTERACTIVITY ---
 
-const BookingView = () => (
-  <div className="fade-in">
-    <h3 className="fw-bold mb-4">Book a Photographer</h3>
-    <div className="row g-4">
-      {db.photographers.map(p => (
-        <div className="col-md-6" key={p.id}>
-          <div className="card border-0 shadow-sm h-100 card-modern">
-            <div className="d-flex p-3 align-items-center">
-              <img src={p.img} className="rounded-circle me-3" style={{width: '80px', height: '80px', objectFit: 'cover'}} alt={p.name} />
-              <div>
-                <h5 className="fw-bold mb-1">{p.name}</h5>
-                <span className="badge bg-gold text-dark mb-2">{p.specialty}</span>
-                <p className="mb-0 text-muted small">{p.rate}</p>
-              </div>
-              <button className="btn btn-dark ms-auto btn-sm rounded-pill px-3">Book Now</button>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-const RentalView = () => (
-  <div className="fade-in">
-    <h3 className="fw-bold mb-4">Rent Equipment</h3>
-    <div className="row g-4">
-      {db.equipment.map(e => (
-        <div className="col-md-4" key={e.id}>
-          <div className="card border-0 shadow-sm h-100 card-modern">
-            <img src={e.img} className="card-img-top" style={{height: '180px', objectFit: 'cover'}} alt={e.name} />
-            <div className="card-body">
-              <h5 className="fw-bold">{e.name}</h5>
-              <div className="d-flex justify-content-between align-items-center">
-                <span className="text-muted small">{e.type}</span>
-                <span className="fw-bold text-primary">{e.rate}</span>
-              </div>
-              <button className="btn btn-outline-dark w-100 mt-3 rounded-pill btn-sm">Add to Cart</button>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
 
 // --- MAIN LAYOUT COMPONENT ---
 
@@ -279,13 +203,30 @@ const UserDashboard = ({ user, onLogout }) => {
     return "Good evening";
   };
 
+  const menuItems = [
+    { id: 'dashboard', icon: 'fa-th-large', label: 'Dashboard' },
+    { id: 'book', icon: 'fa-user-plus', label: 'Book Photographer' },
+    { id: 'my-bookings', icon: 'fa-calendar-alt', label: 'My Bookings' },
+    { id: 'rent', icon: 'fa-camera-retro', label: 'Rent Equipment' },
+    { id: 'my-rentals', icon: 'fa-box-open', label: 'My Rentals' },
+    { id: 'profile', icon: 'fa-user-cog', label: 'Profile' },
+  ];
+
   return (
     <div className="d-flex min-vh-100 bg-light ds-layout">
       {/* 1. SIDEBAR */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={onLogout} />
+      <Sidebar 
+        brandName="E-Imagination"
+        brandIcon="fa-camera-retro"
+        items={menuItems}
+        isFontAwesome={true}
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+        onLogout={onLogout} 
+      />
 
       {/* 2. MAIN CONTENT */}
-      <div className="flex-grow-1 p-4 p-lg-5 overflow-auto">
+      <div className="flex-grow-1 p-4 p-lg-5 overflow-auto pb-5 mb-5">
         <Topbar user={{...db.user, name: user || db.user.name}} />
 
         {/* DYNAMIC CONTENT SWITCHER */}
@@ -321,11 +262,13 @@ const UserDashboard = ({ user, onLogout }) => {
         )}
 
         {/* NEW INTERACTIVE TABS */}
-        {activeTab === 'book' && <BookingView />}
-        {activeTab === 'rent' && <RentalView />}
+        {activeTab === 'book' && <BookPhotographer />}
+        {activeTab === 'rent' && <EquipmentRental />}
+        {activeTab === 'my-bookings' && <MyBookings />}
+        {activeTab === 'profile' && <Profile user={user || db.user.name} />}
         
         {/* Placeholder for others */}
-        {['my-bookings', 'my-rentals', 'wishlist', 'payments', 'profile'].includes(activeTab) && (
+        {['my-rentals', 'wishlist', 'payments'].includes(activeTab) && (
           <div className="fade-in text-center py-5">
             <i className="fas fa-tools fa-3x text-muted mb-3"></i>
             <h3>{activeTab.replace('-', ' ').toUpperCase()} Section</h3>

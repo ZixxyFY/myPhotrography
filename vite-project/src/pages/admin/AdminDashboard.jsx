@@ -9,16 +9,13 @@ import {
   Image as ImageIcon, CreditCard, Settings, ChevronDown, 
   ChevronRight, Bell, Menu, Eye, Plus, Trash2, LogOut
 } from 'lucide-react';
-import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import DashboardOverview from './DashboardOverview';
+import OrdersView from './OrdersView';
+import ServicesView from './ServicesView';
+import StatusBadge from '../../components/StatusBadge';
+import { MOCK_ORDERS } from '../../data/mockOrders';
 
 // --- 1. MOCK DATABASE ---
-const INITIAL_ORDERS = [
-  { id: '12478', date: '12 Aug 2024', time: '14:36', client: 'Janet Adebayo', email: 'janet@example.com', amount: 25000, status: 'Completed', location: 'Manchester', phone: '+44 7700 900077', service: 'Wedding Photography' },
-  { id: '24587', date: '14 Aug 2024', time: '09:15', client: 'James Smith', email: 'james@example.com', amount: 15200, status: 'Confirmed', location: 'London', phone: '+44 7700 900123', service: 'Event Coverage' },
-  { id: '45789', date: '15 Aug 2024', time: '16:45', client: 'Robert Doe', email: 'robert@example.com', amount: 8500, status: 'New', location: 'Leeds', phone: '+44 7700 900456', service: 'Portrait Session' },
-  { id: '99887', date: '16 Aug 2024', time: '11:30', client: 'Alice Brown', email: 'alice@example.com', amount: 0, status: 'Cancelled', location: 'Liverpool', phone: '+44 7700 900789', service: 'Product Shoot' },
-];
-
 const INITIAL_SERVICES = [
   { id: 1, name: 'Wedding Photography', price: '$2000', category: 'Wedding' },
   { id: 2, name: 'Portrait Session', price: '$300', category: 'Portrait' },
@@ -29,33 +26,7 @@ const INITIAL_STUDIOS = [
   { id: 2, name: 'Garden Studio', location: '456 Oak Ln', capacity: 25 },
 ];
 
-// --- DYNAMIC CHART DATA ---
-const CHART_DATA = {
-  '1Y': [{n:'Jan',v:20000}, {n:'Feb',v:45000}, {n:'Mar',v:30000}, {n:'Apr',v:70000}, {n:'May',v:50000}, {n:'Jun',v:65000}],
-  '6M': [{n:'Jan',v:15000}, {n:'Feb',v:25000}, {n:'Mar',v:40000}, {n:'Apr',v:35000}, {n:'May',v:55000}, {n:'Jun',v:45000}],
-  '1M': [{n:'Week 1',v:5000}, {n:'Week 2',v:12000}, {n:'Week 3',v:8000}, {n:'Week 4',v:15000}]
-};
-
 // --- 2. HELPER COMPONENTS ---
-const StatusBadge = ({ status }) => {
-  let variant = 'secondary';
-  if (status === 'Completed') variant = 'success';
-  if (status === 'Confirmed') variant = 'info';
-  if (status === 'New') variant = 'warning';
-  if (status === 'Cancelled') variant = 'danger';
-  
-  return (
-    <Badge 
-      bg={`${variant}-subtle`} 
-      text={variant === 'light' ? 'dark' : variant} 
-      className="px-3 py-2 rounded-pill fw-bold status-badge" 
-      data-status={status}
-      style={{fontFamily: 'var(--font-base)'}}
-    >
-      {status}
-    </Badge>
-  );
-};
 
 const SidebarItem = ({ icon: Icon, label, active, hasSubmenu, isOpen, onClick, children }) => (
   <>
@@ -90,7 +61,7 @@ const Dashboard = ({ user, onLogout }) => {
   const [orderFilter, setOrderFilter] = useState('All');
   
   // Data State
-  const [orders] = useState(INITIAL_ORDERS);
+  const [orders, setOrders] = useState(MOCK_ORDERS);
   const [services, setServices] = useState(INITIAL_SERVICES);
   const [studios, setStudios] = useState(INITIAL_STUDIOS);
   
@@ -132,145 +103,31 @@ const Dashboard = ({ user, onLogout }) => {
     if (type === 'Studio') setStudios(studios.filter(s => s.id !== id));
   };
 
+  const handleUpdateOrderStatus = (id, newStatus) => {
+    const updatedOrders = orders.map(o => o.id === id ? { ...o, status: newStatus } : o);
+    setOrders(updatedOrders);
+    setSelectedOrder(updatedOrders.find(o => o.id === id));
+  };
+
   // --- RENDER CONTENT BASED ON VIEW ---
   const renderContent = () => {
     switch (currentView) {
       case 'Dashboard':
+        return <DashboardOverview orders={orders} onRowClick={setSelectedOrder} />;
+
       case 'Orders': {
-        const isDashboard = currentView === 'Dashboard';
         const filteredOrders = orders.filter(o => orderFilter === 'All' || o.status === orderFilter);
-        
-        return (
-          <div className="animate-fade-in" style={{fontFamily: 'sans-serif'}}>
-            {/* Dynamic Header */}
-            <div className="mb-4">
-               <h3 className="fw-bold mb-1">{isDashboard ? 'Dashboard Overview' : `${orderFilter} Orders`}</h3>
-               <p className="text-muted">{todayDate}</p>
-            </div>
-
-            {/* Top Row: Charts & Stats (Only show on Dashboard view) */}
-            {isDashboard && (
-              <Row className="g-4 mb-4">
-                <Col lg={8}>
-                  <Card className="border-0 shadow-sm h-100 rounded-4">
-                    <Card.Body className="p-4">
-                      <div className="d-flex justify-content-between align-items-center mb-4">
-                        <h6 className="fw-bold mb-0">Revenue Report</h6>
-                        {/* Working Chart Filter Buttons */}
-                        <ButtonGroup size="sm">
-                           <Button variant={chartRange === '1M' ? 'dark' : 'outline-dark'} onClick={() => setChartRange('1M')}>1M</Button>
-                           <Button variant={chartRange === '6M' ? 'dark' : 'outline-dark'} onClick={() => setChartRange('6M')}>6M</Button>
-                           <Button variant={chartRange === '1Y' ? 'dark' : 'outline-dark'} onClick={() => setChartRange('1Y')}>1Y</Button>
-                        </ButtonGroup>
-                      </div>
-                      <div style={{ height: 250 }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                          <AreaChart data={CHART_DATA[chartRange]}>
-                            <defs>
-                              <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3}/>
-                                <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
-                              </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                            <XAxis dataKey="n" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#64748b'}} />
-                            <Tooltip contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'}} />
-                            <Area type="monotone" dataKey="v" stroke="#0ea5e9" strokeWidth={3} fill="url(#colorVal)" />
-                          </AreaChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </Card.Body>
-                  </Card>
-                </Col>
-                <Col lg={4}>
-                  <div className="d-flex flex-column gap-3 h-100">
-                    <Card className="border-0 shadow-sm rounded-4 flex-grow-1 p-4">
-                      <p className="text-muted small fw-bold text-uppercase mb-1">Total Earnings</p>
-                      <h2 className="fw-bold mb-2 text-dark" style={{fontFamily: 'sans-serif'}}>$238,485</h2>
-                      <small className="text-success fw-bold"><i className="fas fa-arrow-up me-1"></i>+14% vs last month</small>
-                    </Card>
-                    <Card className="border-0 shadow-sm rounded-4 flex-grow-1 p-4">
-                      <p className="text-muted small fw-bold text-uppercase mb-1">Total Orders</p>
-                      <h2 className="fw-bold mb-2 text-dark" style={{fontFamily: 'sans-serif'}}>84,382</h2>
-                      <small className="text-success fw-bold"><i className="fas fa-arrow-up me-1"></i>+36% vs last year</small>
-                    </Card>
-                  </div>
-                </Col>
-              </Row>
-            )}
-
-            {/* Orders Table */}
-            <Card className="border-0 shadow-sm rounded-4 overflow-hidden">
-              <Card.Header className="bg-white p-4 border-bottom-0 d-flex justify-content-between align-items-center">
-                <h5 className="mb-0 fw-bold">{isDashboard ? 'Recent Orders' : 'Order List'}</h5>
-              </Card.Header>
-              <Table responsive hover className="m-0 align-middle table-borderless ds-table">
-                <thead className="bg-light text-muted small text-uppercase fw-bold border-bottom">
-                  <tr>
-                    <th className="py-3 ps-4">Order ID</th>
-                    <th>Date & Time</th>
-                    <th>Client Name</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th className="text-center">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredOrders.length > 0 ? filteredOrders.map(order => (
-                    <tr key={order.id} className="border-bottom">
-                      <td className="fw-bold ps-4 text-secondary">#{order.id}</td>
-                      <td>
-                         <div className="fw-bold text-dark">{order.date}</div>
-                         <small className="text-muted">{order.time}</small>
-                      </td>
-                      <td className="fw-bold text-dark">{order.client}</td>
-                      <td className="fw-bold text-dark">${order.amount.toLocaleString()}</td>
-                      <td><StatusBadge status={order.status} /></td>
-                      <td className="text-center">
-                         {/* Working View Button */}
-                         <Button 
-                            variant="outline-secondary" 
-                            size="sm" 
-                            className="rounded-pill px-3 fw-bold bg-white"
-                            onClick={() => setSelectedOrder(order)}
-                         >
-                           <Eye size={14} className="me-1"/> View
-                         </Button>
-                      </td>
-                    </tr>
-                  )) : <tr><td colSpan={6} className="text-center p-5 text-muted">No orders found for this filter.</td></tr>}
-                </tbody>
-              </Table>
-            </Card>
-          </div>
-        );
+        return <OrdersView orders={filteredOrders} filter={orderFilter} onRowClick={setSelectedOrder} />;
       }
 
       // ... Rest of the cases remain structurally the same but font applied ...
       case 'Services':
         return (
-          <div style={{fontFamily: 'sans-serif'}}>
-            <div className="d-flex justify-content-between mb-4 align-items-center">
-               <h3 className="fw-bold m-0">Manage Services</h3>
-               <Button onClick={() => { setModalType('Service'); setShowAddModal(true); }} className="d-flex align-items-center gap-2 rounded-pill"><Plus size={18}/> Add Service</Button>
-            </div>
-            <Row className="g-4">
-              {services.map(s => (
-                <Col md={4} key={s.id}>
-                  <Card className="border-0 shadow-sm h-100 rounded-4">
-                    <Card.Body className="p-4">
-                      <div className="d-flex justify-content-between mb-2">
-                        <h5 className="fw-bold text-dark">{s.name}</h5>
-                        <Button variant="link" className="text-danger p-0" onClick={() => handleDelete(s.id, 'Service')}><Trash2 size={18}/></Button>
-                      </div>
-                      <Badge bg="light" text="secondary" className="mb-4">{s.category}</Badge>
-                      <h3 className="text-primary fw-bold mb-0">{s.price}</h3>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          </div>
+          <ServicesView 
+            services={services} 
+            onAddClick={() => { setModalType('Service'); setShowAddModal(true); }} 
+            onDelete={(id) => handleDelete(id, 'Service')} 
+          />
         );
 
       case 'Settings':
@@ -431,9 +288,16 @@ const Dashboard = ({ user, onLogout }) => {
                     </Card>
                  </Col>
               </Row>
-              <div className="d-flex gap-2 justify-content-end mt-4">
-                 <Button variant="outline-danger" className="rounded-pill px-4">Cancel Order</Button>
-                 <Button variant="primary" className="rounded-pill px-4">Edit Details</Button>
+              <div className="d-flex gap-2 justify-content-end mt-4 border-top pt-3">
+                 {selectedOrder.status !== 'Cancelled' && (
+                    <Button variant="outline-danger" className="rounded-pill px-4" onClick={() => handleUpdateOrderStatus(selectedOrder.id, 'Cancelled')}>Cancel Order</Button>
+                 )}
+                 {selectedOrder.status === 'New' && (
+                    <Button variant="primary" className="rounded-pill px-4" onClick={() => handleUpdateOrderStatus(selectedOrder.id, 'Confirmed')}>Confirm Order</Button>
+                 )}
+                 {selectedOrder.status === 'Confirmed' && (
+                    <Button variant="success" className="rounded-pill px-4" onClick={() => handleUpdateOrderStatus(selectedOrder.id, 'Completed')}>Mark Completed</Button>
+                 )}
               </div>
             </Modal.Body>
           </>

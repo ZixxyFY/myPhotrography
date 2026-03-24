@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import Landing from './Landing';
-import Login from './Login';
-import Registration from './Registration';
-import RentalShop from './RentalShop';
-import Dashboard from './Dashboard';    
-import UserDashboard from './UserDashboard'; 
-import './App.css'; 
-import './theme.css';
+import Landing from './pages/Landing';
+import Login from './pages/Login';
+import Registration from './pages/Registration';
+import EquipmentRental from './pages/user/EquipmentRental';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import UserDashboard from './pages/user/UserDashboard';
+import './styles/App.css';
+import './styles/theme.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
@@ -82,17 +82,17 @@ const App = () => {
         />
       )}
 
-      {/* RENTAL SHOP PAGE */}
+      {/* EQUIPMENT RENTAL PAGE */}
       {currentView === 'rental' && (
-          <RentalShop onBack={navigateToHome} />
+        <EquipmentRental onBack={navigateToHome} />
       )}
 
       {/* ADMIN DASHBOARD */}
       {currentView === 'admin-dashboard' && role === 'admin' && (
-          <Dashboard 
-            user={user} 
-            onLogout={handleLogout} 
-          />
+        <AdminDashboard
+          user={user}
+          onLogout={handleLogout}
+        />
       )}
 
       {/* USER DASHBOARD */}
