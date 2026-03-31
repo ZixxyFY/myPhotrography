@@ -2,7 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
+
 const User = require('./models/User');
+const Contact = require('./models/Contact');
 
 const app = express();
 const PORT = 5000;
@@ -21,20 +23,29 @@ app.get('/', (req, res) => {
   res.send('Backend server is running');
 });
 
-// Register route
+// ================= REGISTER ROUTE =================
 app.post('/register', async (req, res) => {
   try {
+    console.log('Register Data:', req.body);
+
     const { fullName, email, password } = req.body;
 
-    // Check if fields are empty
+    // Validation
     if (!fullName || !email || !password) {
-      return res.status(400).json({ message: 'All fields are required' });
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required'
+      });
     }
 
-    // Check if email already exists
+    // Check existing email
     const existingUser = await User.findOne({ email });
+
     if (existingUser) {
-      return res.status(400).json({ message: 'Email already registered' });
+      return res.status(400).json({
+        success: false,
+        message: 'Email already registered'
+      });
     }
 
     // Hash password
@@ -49,14 +60,65 @@ app.post('/register', async (req, res) => {
 
     await newUser.save();
 
-    res.status(201).json({ message: 'Account created successfully' });
+    console.log('Saved User:', newUser);
+
+    res.status(201).json({
+      success: true,
+      message: 'Account created successfully'
+    });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Register Error:', error);
+
+    res.status(500).json({
+      success: false,
+      message: 'Server error'
+    });
   }
 });
 
+// ================= CONTACT ROUTE =================
+app.post('/api/contact', async (req, res) => {
+  try {
+    console.log('Contact Data:', req.body);
+
+    const { cName, cEmail, cMessage } = req.body;
+
+    // Validation
+    if (!cName || !cEmail || !cMessage) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required'
+      });
+    }
+
+    // Create contact
+    const newContact = new Contact({
+      cName,
+      cEmail,
+      cMessage
+    });
+
+    await newContact.save();
+
+    console.log('Saved Contact:', newContact);
+
+    res.status(201).json({
+      success: true,
+      message: 'Contact saved successfully'
+    });
+
+  } catch (error) {
+    console.error('Contact Error:', error);
+
+    res.status(500).json({
+      success: false,
+      message: 'Server error'
+    });
+  }
+});
+
+// Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

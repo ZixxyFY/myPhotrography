@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Navbar from '../components/Navbar';
-import FormInput from '../components/FormInput';
+// import FormInput from '../components/FormInput';
 
 /* ===== PORTFOLIO / TEAM DATA ===== */
 const portfolioData = [
@@ -43,7 +43,7 @@ const portfolioData = [
   }
 ];
 
-const Landing = ({ user, onLogout, onLoginClick, onDashboardClick }) => {
+const Landing = ({ user, onLoginClick, onDashboardClick }) => {
   const [formData, setFormData] = useState({
     cName: '', cEmail: '', cSubject: '', cMessage: ''
   });
@@ -62,11 +62,41 @@ const Landing = ({ user, onLogout, onLoginClick, onDashboardClick }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  const handleContactSubmit = (e) => {
-    e.preventDefault();
-    alert(`Message sent! We will contact you at ${formData.cEmail}`);
-    setFormData({ cName: '', cEmail: '', cSubject: '', cMessage: '' });
+ const handleContactSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch('http://localhost:5000/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        cName: formData.cName,
+        cEmail: formData.cEmail,
+        cMessage: formData.cMessage
+      })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert('Message sent successfully!');
+      setFormData({
+        cName: '',
+        cEmail: '',
+        cSubject: '',
+        cMessage: ''
+      });
+    } else {
+      alert(data.message || 'Failed to send message');
+    }
+
+  } catch (error) {
+    console.error('Error sending contact form:', error);
+    alert('Server error. Please try again later.');
   }
+};
 
   // Custom Styles for the specific design elements
   const styles = {
@@ -326,10 +356,9 @@ const Landing = ({ user, onLogout, onLoginClick, onDashboardClick }) => {
 };
 
 Landing.propTypes = {
+  user: PropTypes.string,
   onLoginClick: PropTypes.func.isRequired,
-  onLogout: PropTypes.func.isRequired,
-  onDashboardClick: PropTypes.func,
-  user: PropTypes.string
+  onDashboardClick: PropTypes.func
 };
 
 export default Landing;

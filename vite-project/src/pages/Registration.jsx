@@ -55,7 +55,7 @@ class Registration extends Component {
     console.error('Registration Error:', error);
     alert('Something went wrong. Please try again.');
   }
-}
+}   
 
   render() {
     const { onBack, onLoginClick } = this.props;
