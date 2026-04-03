@@ -1,0 +1,235 @@
+.register-page {
+  min-height: 100vh;
+  background: linear-gradient(
+      135deg,
+      rgba(25, 20, 18, 0.65),
+      rgba(58, 43, 34, 0.55)
+    ),
+    url("https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=80")
+      center/cover no-repeat;
+  position: relative;
+  overflow: hidden;
+}
+
+.register-overlay {
+  min-height: 100vh;
+  backdrop-filter: blur(2px);
+}
+
+.brand-panel {
+  max-width: 520px;
+}
+
+.brand-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(10px);
+}
+
+.brand-title {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.brand-subtitle {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 480px;
+}
+
+.brand-features {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.feature-item {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 12px 16px;
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  font-size: 0.95rem;
+}
+
+/* Main Form Card */
+.register-card {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+}
+
+.icon-circle {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #8b5e3c, #d6b89a);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  box-shadow: 0 10px 25px rgba(139, 94, 60, 0.3);
+}
+
+.register-heading {
+  color: #2f241d;
+  font-size: 2rem;
+}
+
+.register-subtext {
+  color: #6f5d50;
+  font-size: 0.95rem;
+}
+
+.password-hint {
+  font-size: 0.82rem;
+  color: #7b6a5e;
+  padding-left: 4px;
+}
+
+/* Primary Button */
+.register-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 13px 20px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+  background: linear-gradient(135deg, #6f4a2f, #c89f7a);
+  box-shadow: 0 10px 22px rgba(111, 74, 47, 0.28);
+  transition: all 0.3s ease;
+}
+
+.register-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(111, 74, 47, 0.35);
+}
+
+/* Links & Secondary Buttons */
+.login-link-btn {
+  border: none;
+  background: transparent;
+  color: #8b5e3c;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+
+.login-link-btn:hover {
+  color: #6f4a2f;
+  text-decoration: underline;
+}
+
+.divider {
+  position: relative;
+  text-align: center;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 42%;
+  height: 1px;
+  background: #d8cfc8;
+}
+
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 42%;
+  height: 1px;
+  background: #d8cfc8;
+}
+
+.divider span {
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0 12px;
+  color: #8a7a6d;
+  font-size: 0.85rem;
+}
+
+.back-btn {
+  border: 1px solid #d7c2b0;
+  background: rgba(255, 255, 255, 0.7);
+  color: #5d4b3d;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.back-btn:hover {
+  background: #fff;
+  transform: translateY(-1px);
+}
+
+/* Improve input styles if FormInput uses bootstrap form-control */
+.register-card .form-control {
+  border-radius: 14px !important;
+  padding: 12px 14px !important;
+  border: 1px solid #d9c8ba !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  transition: all 0.3s ease;
+}
+
+.register-card .form-control:focus {
+  border-color: #b07d58 !important;
+  box-shadow: 0 0 0 0.2rem rgba(176, 125, 88, 0.15) !important;
+  background: #fff !important;
+}
+
+.register-card label {
+  font-weight: 600;
+  color: #4b3a2f;
+  margin-bottom: 6px;
+}
+
+.mobile-branding h4 {
+  font-weight: 700;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .register-page {
+    background-position: center;
+  }
+
+  .register-heading {
+    font-size: 1.7rem;
+  }
+
+  .register-card {
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 576px) {
+  .register-card .card-body {
+    padding: 1.5rem !important;
+  }
+
+  .register-heading {
+    font-size: 1.5rem;
+  }
+
+  .register-btn {
+    font-size: 0.95rem;
+  }
+}
