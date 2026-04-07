@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { 
-  Row, Col, Nav, Table, Card, Badge, Form, Button, 
+  Row, Col, Table, Card, Badge, Form, Button, 
   Collapse, Modal, Container, Dropdown, ButtonGroup 
 } from 'react-bootstrap';
 import { 
@@ -32,19 +32,24 @@ const SidebarItem = ({ icon: Icon, label, active, hasSubmenu, isOpen, onClick, c
   <>
     <div 
       onClick={onClick} 
-      className={`sidebar-link d-flex justify-content-between align-items-center ${active ? 'active fw-bold' : ''}`} 
+      // FIX: Removed 'sidebar-link' entirely so global CSS cannot force it to be white
+      className={`d-flex justify-content-between align-items-center ${active ? 'fw-bold' : ''}`} 
       style={{
-        cursor: 'pointer', padding: '12px 16px', borderRadius: '8px', 
-        color: active ? '#0ea5e9' : '#64748b', 
-        backgroundColor: active ? '#e0f2fe' : 'transparent',
-        marginBottom: '4px', transition: 'all 0.2s ease', fontFamily: 'sans-serif'
+        cursor: 'pointer', 
+        padding: '12px 16px', 
+        borderRadius: '8px', 
+        color: active ? '#C5A059' : '#A0A0A0', 
+        backgroundColor: active ? 'rgba(197, 160, 89, 0.1)' : 'transparent',
+        marginBottom: '4px', 
+        transition: 'all 0.2s ease', 
+        fontFamily: "'Montserrat', sans-serif",
       }}
     >
       <div className="d-flex align-items-center gap-3">
-        <Icon size={20} strokeWidth={active ? 2.5 : 1.5} />
+        <Icon size={20} strokeWidth={active ? 2.5 : 1.5} color={active ? '#C5A059' : '#A0A0A0'} />
         <span style={{ fontSize: '0.95rem' }}>{label}</span>
       </div>
-      {hasSubmenu && (isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />)}
+      {hasSubmenu && (isOpen ? <ChevronDown size={16} color={active ? '#C5A059' : '#A0A0A0'} /> : <ChevronRight size={16} color={active ? '#C5A059' : '#A0A0A0'} />)}
     </div>
     <Collapse in={isOpen}>
       <div className="d-flex flex-column gap-1 mb-2 mt-1">
@@ -67,7 +72,6 @@ const Dashboard = ({ user, onLogout }) => {
   
   // UI Interactive State
   const [openMenus, setOpenMenus] = useState({ orders: true, services: false });
-  const [chartRange, setChartRange] = useState('1Y');
   
   // Modal States
   const [showAddModal, setShowAddModal] = useState(false);
@@ -120,7 +124,6 @@ const Dashboard = ({ user, onLogout }) => {
         return <OrdersView orders={filteredOrders} filter={orderFilter} onRowClick={setSelectedOrder} />;
       }
 
-      // ... Rest of the cases remain structurally the same but font applied ...
       case 'Services':
         return (
           <ServicesView 
@@ -132,25 +135,37 @@ const Dashboard = ({ user, onLogout }) => {
 
       case 'Settings':
         return (
-          <Card className="border-0 shadow-sm p-5 mx-auto rounded-4" style={{maxWidth: '800px', fontFamily: 'sans-serif'}}>
-            <h3 className="mb-4 fw-bold">Admin Profile Settings</h3>
+          <Card className="border-0 shadow-sm p-5 mx-auto" style={{maxWidth: '800px', backgroundColor: '#242426', borderRadius: '12px', border: '1px solid rgba(197, 160, 89, 0.3)'}}>
+            <h3 className="mb-4 fw-bold" style={{fontFamily: "'Playfair Display', serif", color: '#F5F5F7'}}>Admin Profile Settings</h3>
             <Form>
               <Row className="mb-4 g-3">
-                <Col md={6}><Form.Label className="fw-bold small text-muted">First Name</Form.Label><Form.Control defaultValue="Admin" className="bg-light border-0 py-2" /></Col>
-                <Col md={6}><Form.Label className="fw-bold small text-muted">Last Name</Form.Label><Form.Control defaultValue="User" className="bg-light border-0 py-2" /></Col>
+                <Col md={6}>
+                  <Form.Label style={{color: '#A0A0A0'}}>First Name</Form.Label>
+                  <Form.Control defaultValue="Admin" style={{backgroundColor: '#1A1A1B', border: '1px solid rgba(197, 160, 89, 0.3)', color: '#F5F5F7'}} className="shadow-none focus-ring focus-ring-warning py-2" />
+                </Col>
+                <Col md={6}>
+                  <Form.Label style={{color: '#A0A0A0'}}>Last Name</Form.Label>
+                  <Form.Control defaultValue="User" style={{backgroundColor: '#1A1A1B', border: '1px solid rgba(197, 160, 89, 0.3)', color: '#F5F5F7'}} className="shadow-none focus-ring focus-ring-warning py-2" />
+                </Col>
               </Row>
-              <Form.Group className="mb-4"><Form.Label className="fw-bold small text-muted">Email Address</Form.Label><Form.Control defaultValue="admin@e-imagination.com" className="bg-light border-0 py-2" /></Form.Group>
-              <Form.Group className="mb-5"><Form.Label className="fw-bold small text-muted">Business Name</Form.Label><Form.Control defaultValue="E-Imagination Studios" className="bg-light border-0 py-2" /></Form.Group>
-              <Button variant="primary" className="px-5 py-2 rounded-pill fw-bold">Save Changes</Button>
+              <Form.Group className="mb-4">
+                <Form.Label style={{color: '#A0A0A0'}}>Email Address</Form.Label>
+                <Form.Control defaultValue="admin@e-imagination.com" style={{backgroundColor: '#1A1A1B', border: '1px solid rgba(197, 160, 89, 0.3)', color: '#F5F5F7'}} className="shadow-none focus-ring focus-ring-warning py-2" />
+              </Form.Group>
+              <Form.Group className="mb-5">
+                <Form.Label style={{color: '#A0A0A0'}}>Business Name</Form.Label>
+                <Form.Control defaultValue="E-Imagination Studios" style={{backgroundColor: '#1A1A1B', border: '1px solid rgba(197, 160, 89, 0.3)', color: '#F5F5F7'}} className="shadow-none focus-ring focus-ring-warning py-2" />
+              </Form.Group>
+              <Button className="px-5 py-2 rounded-pill fw-bold border-0" style={{backgroundColor: '#C5A059', color: '#1A1A1B'}}>Save Changes</Button>
             </Form>
           </Card>
         );
 
       default:
         return (
-          <div className="p-5 text-center text-muted d-flex flex-column align-items-center justify-content-center h-100" style={{fontFamily: 'sans-serif'}}>
+          <div className="p-5 text-center d-flex flex-column align-items-center justify-content-center h-100" style={{color: '#A0A0A0'}}>
              <ImageIcon size={64} className="mb-3 opacity-25" />
-             <h3 className="fw-bold">{currentView}</h3>
+             <h3 className="fw-bold" style={{fontFamily: "'Playfair Display', serif", color: '#F5F5F7'}}>{currentView}</h3>
              <p>This module is currently under development.</p>
           </div>
         );
@@ -158,25 +173,25 @@ const Dashboard = ({ user, onLogout }) => {
   };
 
   return (
-    <div className="d-flex bg-light min-vh-100 font-sans text-dark ds-layout">
+    <div className="d-flex min-vh-100 ds-layout" style={{ backgroundColor: '#1A1A1B', color: '#F5F5F7', fontFamily: "'Montserrat', sans-serif" }}>
       
       {/* SIDEBAR */}
-      <div className="bg-white border-end d-none d-lg-block sticky-top" style={{ width: '280px', height: '100vh', overflowY: 'auto' }}>
+      <div className="d-none d-lg-block sticky-top" style={{ width: '280px', height: '100vh', overflowY: 'auto', backgroundColor: '#242426', borderRight: '1px solid rgba(197, 160, 89, 0.2)' }}>
         <div className="p-4 mb-2">
-          <h4 className="fw-bold d-flex align-items-center gap-2 text-primary" style={{ letterSpacing: '-0.5px', fontFamily: 'var(--font-base)' }}>
+          <h4 className="fw-bold d-flex align-items-center gap-2" style={{ letterSpacing: '-0.5px', fontFamily: "'Playfair Display', serif", color: '#C5A059' }}>
             <Camera size={28} /> LensDash
           </h4>
         </div>
         
-        <Nav className="flex-column px-3 pb-5 gap-1">
+        <div className="d-flex flex-column px-3 pb-5 gap-1">
           <SidebarItem icon={LayoutDashboard} label="Dashboard" active={currentView === 'Dashboard'} onClick={() => handleNavClick('Dashboard')} />
 
           <SidebarItem icon={ShoppingCart} label="Orders" active={currentView === 'Orders'} hasSubmenu isOpen={openMenus.orders} onClick={() => toggleMenu('orders')}>
-            <div className="ms-4 ps-3 border-start py-1">
-              <div className={`p-2 small cursor-pointer rounded ${orderFilter === 'New' && currentView === 'Orders' ? 'bg-primary text-white fw-bold' : 'text-muted hover-bg-light'}`} onClick={() => handleNavClick('Orders', 'New')}>New Orders</div>
-              <div className={`p-2 small cursor-pointer rounded ${orderFilter === 'Confirmed' && currentView === 'Orders' ? 'bg-primary text-white fw-bold' : 'text-muted hover-bg-light'}`} onClick={() => handleNavClick('Orders', 'Confirmed')}>Confirmed Orders</div>
-              <div className={`p-2 small cursor-pointer rounded ${orderFilter === 'Completed' && currentView === 'Orders' ? 'bg-primary text-white fw-bold' : 'text-muted hover-bg-light'}`} onClick={() => handleNavClick('Orders', 'Completed')}>Completed Orders</div>
-              <div className={`p-2 small cursor-pointer rounded ${orderFilter === 'Cancelled' && currentView === 'Orders' ? 'bg-primary text-white fw-bold' : 'text-muted hover-bg-light'}`} onClick={() => handleNavClick('Orders', 'Cancelled')}>Cancelled Orders</div>
+            <div className="ms-4 ps-3 py-1" style={{ borderLeft: '1px solid rgba(197, 160, 89, 0.2)' }}>
+              <div className="p-2 small cursor-pointer rounded" style={{ color: orderFilter === 'New' && currentView === 'Orders' ? '#C5A059' : '#A0A0A0' }} onClick={() => handleNavClick('Orders', 'New')}>New Orders</div>
+              <div className="p-2 small cursor-pointer rounded" style={{ color: orderFilter === 'Confirmed' && currentView === 'Orders' ? '#C5A059' : '#A0A0A0' }} onClick={() => handleNavClick('Orders', 'Confirmed')}>Confirmed Orders</div>
+              <div className="p-2 small cursor-pointer rounded" style={{ color: orderFilter === 'Completed' && currentView === 'Orders' ? '#C5A059' : '#A0A0A0' }} onClick={() => handleNavClick('Orders', 'Completed')}>Completed Orders</div>
+              <div className="p-2 small cursor-pointer rounded" style={{ color: orderFilter === 'Cancelled' && currentView === 'Orders' ? '#C5A059' : '#A0A0A0' }} onClick={() => handleNavClick('Orders', 'Cancelled')}>Cancelled Orders</div>
             </div>
           </SidebarItem>
 
@@ -186,45 +201,46 @@ const Dashboard = ({ user, onLogout }) => {
           <SidebarItem icon={ImageIcon} label="Portfolio" active={currentView === 'Portfolio'} onClick={() => handleNavClick('Portfolio')} />
           <SidebarItem icon={CreditCard} label="Payment" active={currentView === 'Payment'} onClick={() => handleNavClick('Payment')} />
           
-          <div className="mt-4 mb-2 text-muted small px-3 fw-bold text-uppercase" style={{fontSize: '0.75rem', letterSpacing: '0.5px'}}>Settings</div>
+          <div className="mt-4 mb-2 small px-3 fw-bold text-uppercase" style={{fontSize: '0.75rem', letterSpacing: '0.5px', color: '#A0A0A0'}}>Settings</div>
           <SidebarItem icon={Settings} label="Profile" active={currentView === 'Settings'} onClick={() => handleNavClick('Settings')} />
-        </Nav>
+        </div>
       </div>
 
       {/* MAIN LAYOUT */}
       <div className="flex-grow-1 d-flex flex-column" style={{overflowX: 'hidden'}}>
-        <header className="bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center sticky-top shadow-sm" style={{zIndex: 100, height: '70px'}}>
+        <header className="px-4 py-3 d-flex justify-content-between align-items-center sticky-top shadow-sm" style={{zIndex: 100, height: '70px', backgroundColor: '#242426', borderBottom: '1px solid rgba(197, 160, 89, 0.2)'}}>
           <div className="d-flex align-items-center gap-3">
-            <Button variant="light" className="d-lg-none"><Menu size={20}/></Button>
-            {/* Search Bar Placeholder */}
-            <div className="d-none d-md-flex align-items-center bg-light rounded-pill px-3 py-2" style={{width: '300px'}}>
-               <i className="fas fa-search text-muted me-2"></i>
-               <input type="text" className="border-0 bg-transparent w-100" placeholder="Search orders, clients..." style={{outline: 'none', fontSize: '0.9rem'}} />
+            <Button variant="link" className="d-lg-none p-0" style={{color: '#C5A059'}}><Menu size={20}/></Button>
+            
+            <div className="d-none d-md-flex align-items-center rounded-pill px-3 py-2" style={{width: '300px', backgroundColor: '#1A1A1B', border: '1px solid rgba(197, 160, 89, 0.3)'}}>
+               <i className="fas fa-search me-2" style={{color: '#A0A0A0'}}></i>
+               <input type="text" className="border-0 bg-transparent w-100 text-light shadow-none" placeholder="Search orders, clients..." style={{outline: 'none', fontSize: '0.9rem'}} />
             </div>
           </div>
           
           <div className="d-flex align-items-center gap-4">
              <div className="position-relative cursor-pointer">
-               <Bell size={22} className="text-secondary"/>
-               <span className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+               <Bell size={22} color="#C5A059"/>
+               <span className="position-absolute top-0 start-100 translate-middle p-1 rounded-circle" style={{backgroundColor: '#DC3545', border: '1px solid #242426'}}></span>
              </div>
              
-             {/* Working Profile Dropdown */}
+             {/* Working Profile Dropdown styled for Dark Mode */}
              <Dropdown align="end">
                 <Dropdown.Toggle as="div" className="d-flex align-items-center gap-2 cursor-pointer" style={{cursor: 'pointer'}}>
                   <div className="text-end d-none d-md-block">
-                     <p className="mb-0 fw-bold lh-1 text-dark" style={{fontSize: '0.9rem'}}>{user || 'Admin User'}</p>
-                     <small className="text-muted" style={{fontSize: '0.75rem'}}>Administrator</small>
+                     <p className="mb-0 fw-bold lh-1" style={{fontSize: '0.9rem', color: '#F5F5F7'}}>{user || 'Admin User'}</p>
+                     <small style={{fontSize: '0.75rem', color: '#C5A059'}}>Administrator</small>
                   </div>
-                  <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold shadow-sm" style={{width: 40, height: 40}}>
+                  <div className="rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style={{width: 40, height: 40, backgroundColor: 'rgba(197, 160, 89, 0.2)', color: '#C5A059', border: '1px solid rgba(197, 160, 89, 0.5)'}}>
                      {user ? user.charAt(0).toUpperCase() : 'A'}
                   </div>
                 </Dropdown.Toggle>
-                <Dropdown.Menu className="border-0 shadow-lg rounded-3 mt-2">
-                  <Dropdown.Header>Welcome, Admin</Dropdown.Header>
-                  <Dropdown.Item onClick={() => handleNavClick('Settings')}><Settings size={16} className="me-2"/> Settings</Dropdown.Item>
-                  <Dropdown.Divider />
-                  <Dropdown.Item onClick={onLogout} className="text-danger fw-bold"><LogOut size={16} className="me-2"/> Log Out</Dropdown.Item>
+                
+                <Dropdown.Menu className="border-0 shadow-lg rounded-3 mt-2" style={{backgroundColor: '#242426', border: '1px solid rgba(197, 160, 89, 0.3)'}}>
+                  <Dropdown.Header style={{color: '#A0A0A0'}}>Welcome, Admin</Dropdown.Header>
+                  <Dropdown.Item onClick={() => handleNavClick('Settings')} style={{color: '#F5F5F7'}} className="dropdown-item-dark"><Settings size={16} className="me-2"/> Settings</Dropdown.Item>
+                  <Dropdown.Divider style={{borderColor: 'rgba(197, 160, 89, 0.2)'}} />
+                  <Dropdown.Item onClick={onLogout} style={{color: '#DC3545'}} className="fw-bold dropdown-item-dark"><LogOut size={16} className="me-2"/> Log Out</Dropdown.Item>
                 </Dropdown.Menu>
              </Dropdown>
           </div>
@@ -236,67 +252,69 @@ const Dashboard = ({ user, onLogout }) => {
       </div>
 
       {/* --- MODALS --- */}
-
       {/* 1. Modal for Adding Services/Studios */}
-      <Modal show={showAddModal} onHide={() => setShowAddModal(false)} centered>
-        <Modal.Header closeButton className="border-0 pb-0"><Modal.Title className="fw-bold">Add New {modalType}</Modal.Title></Modal.Header>
+      <Modal show={showAddModal} onHide={() => setShowAddModal(false)} centered style={{ '--bs-modal-bg': '#242426' }}>
+        <Modal.Header closeButton closeVariant="white" className="border-0 pb-0">
+            <Modal.Title className="fw-bold" style={{fontFamily: "'Playfair Display', serif", color: '#F5F5F7'}}>Add New {modalType}</Modal.Title>
+        </Modal.Header>
         <Modal.Body>
-          <Form.Label className="fw-bold small text-muted">Name</Form.Label>
-          <Form.Control className="bg-light border-0 py-2 mb-3" value={newItemName} onChange={(e) => setNewItemName(e.target.value)} placeholder={`Enter ${modalType} Name`} />
+          <Form.Label style={{color: '#A0A0A0'}} className="fw-bold small">Name</Form.Label>
+          <Form.Control style={{backgroundColor: '#1A1A1B', border: '1px solid rgba(197, 160, 89, 0.3)', color: '#F5F5F7'}} className="py-2 mb-3 shadow-none focus-ring focus-ring-warning" value={newItemName} onChange={(e) => setNewItemName(e.target.value)} placeholder={`Enter ${modalType} Name`} />
         </Modal.Body>
         <Modal.Footer className="border-0 pt-0">
-          <Button variant="light" className="rounded-pill" onClick={() => setShowAddModal(false)}>Cancel</Button>
-          <Button variant="primary" className="rounded-pill px-4" onClick={handleAddItem}>Save {modalType}</Button>
+          <Button variant="link" style={{color: '#A0A0A0', textDecoration: 'none'}} onClick={() => setShowAddModal(false)}>Cancel</Button>
+          <Button className="rounded-pill px-4 border-0 fw-bold" style={{backgroundColor: '#C5A059', color: '#1A1A1B'}} onClick={handleAddItem}>Save {modalType}</Button>
         </Modal.Footer>
       </Modal>
 
       {/* 2. Interactive Order Details Modal */}
-      <Modal show={selectedOrder !== null} onHide={() => setSelectedOrder(null)} centered size="lg">
+      <Modal show={selectedOrder !== null} onHide={() => setSelectedOrder(null)} centered size="lg" style={{ '--bs-modal-bg': '#242426' }}>
         {selectedOrder && (
           <>
-            <Modal.Header closeButton className="border-bottom bg-light">
-              <Modal.Title className="fw-bold d-flex align-items-center gap-3">
+            <Modal.Header closeButton closeVariant="white" style={{borderBottom: '1px solid rgba(197, 160, 89, 0.2)'}}>
+              <Modal.Title className="fw-bold d-flex align-items-center gap-3" style={{fontFamily: "'Playfair Display', serif", color: '#F5F5F7'}}>
                  Order #{selectedOrder.id}
                  <StatusBadge status={selectedOrder.status} />
               </Modal.Title>
             </Modal.Header>
-            <Modal.Body className="p-4" style={{fontFamily: 'sans-serif'}}>
+            <Modal.Body className="p-4" style={{fontFamily: "'Montserrat', sans-serif"}}>
               <Row className="g-4 mb-4">
                  <Col md={6}>
-                    <h6 className="fw-bold text-muted text-uppercase small mb-3">Client Details</h6>
-                    <p className="mb-1 fw-bold fs-5">{selectedOrder.client}</p>
-                    <p className="mb-1 text-muted"><i className="fas fa-envelope me-2 w-15px text-center"></i> {selectedOrder.email}</p>
-                    <p className="mb-1 text-muted"><i className="fas fa-phone me-2 w-15px text-center"></i> {selectedOrder.phone}</p>
-                    <p className="mb-0 text-muted"><i className="fas fa-map-marker-alt me-2 w-15px text-center"></i> {selectedOrder.location}</p>
+                    <h6 className="fw-bold text-uppercase small mb-3" style={{color: '#C5A059'}}>Client Details</h6>
+                    <p className="mb-1 fw-bold fs-5" style={{color: '#F5F5F7'}}>{selectedOrder.client}</p>
+                    <p className="mb-1" style={{color: '#A0A0A0'}}><i className="fas fa-envelope me-2 w-15px text-center"></i> {selectedOrder.email || 'client@example.com'}</p>
+                    <p className="mb-1" style={{color: '#A0A0A0'}}><i className="fas fa-phone me-2 w-15px text-center"></i> {selectedOrder.phone || '+1 234 567 8900'}</p>
+                    <p className="mb-0" style={{color: '#A0A0A0'}}><i className="fas fa-map-marker-alt me-2 w-15px text-center"></i> {selectedOrder.location}</p>
                  </Col>
                  <Col md={6}>
-                    <h6 className="fw-bold text-muted text-uppercase small mb-3">Order Summary</h6>
-                    <Card className="border-0 bg-light rounded-3 p-3">
+                    <h6 className="fw-bold text-uppercase small mb-3" style={{color: '#C5A059'}}>Order Summary</h6>
+                    <Card className="border-0 rounded-3 p-3" style={{backgroundColor: '#1A1A1B'}}>
                        <div className="d-flex justify-content-between mb-2">
-                          <span className="text-muted">Service Booked</span>
-                          <span className="fw-bold">{selectedOrder.service}</span>
+                          <span style={{color: '#A0A0A0'}}>Service Booked</span>
+                          <span className="fw-bold" style={{color: '#F5F5F7'}}>{selectedOrder.service || 'Photography'}</span>
                        </div>
                        <div className="d-flex justify-content-between mb-2">
-                          <span className="text-muted">Schedule</span>
-                          <span className="fw-bold">{selectedOrder.date} at {selectedOrder.time}</span>
+                          <span style={{color: '#A0A0A0'}}>Schedule</span>
+                          <span className="fw-bold" style={{color: '#F5F5F7'}}>{selectedOrder.date} at {selectedOrder.time || '10:00 AM'}</span>
                        </div>
-                       <hr className="my-2"/>
+                       <hr className="my-2" style={{borderColor: 'rgba(197, 160, 89, 0.3)'}}/>
                        <div className="d-flex justify-content-between">
-                          <span className="text-muted">Total Amount</span>
-                          <span className="fw-bold fs-5 text-primary">${selectedOrder.amount.toLocaleString()}</span>
+                          <span style={{color: '#A0A0A0'}}>Total Amount</span>
+                          <span className="fw-bold fs-5" style={{color: '#C5A059'}}>${selectedOrder.amount.toLocaleString()}</span>
                        </div>
                     </Card>
                  </Col>
               </Row>
-              <div className="d-flex gap-2 justify-content-end mt-4 border-top pt-3">
+              
+              <div className="d-flex gap-2 justify-content-end mt-4 pt-3" style={{borderTop: '1px solid rgba(197, 160, 89, 0.2)'}}>
                  {selectedOrder.status !== 'Cancelled' && (
-                    <Button variant="outline-danger" className="rounded-pill px-4" onClick={() => handleUpdateOrderStatus(selectedOrder.id, 'Cancelled')}>Cancel Order</Button>
+                    <Button className="rounded-pill px-4" style={{backgroundColor: 'transparent', border: '1px solid #DC3545', color: '#DC3545'}} onClick={() => handleUpdateOrderStatus(selectedOrder.id, 'Cancelled')}>Cancel Order</Button>
                  )}
                  {selectedOrder.status === 'New' && (
-                    <Button variant="primary" className="rounded-pill px-4" onClick={() => handleUpdateOrderStatus(selectedOrder.id, 'Confirmed')}>Confirm Order</Button>
+                    <Button className="rounded-pill px-4 border-0 fw-bold" style={{backgroundColor: '#C5A059', color: '#1A1A1B'}} onClick={() => handleUpdateOrderStatus(selectedOrder.id, 'Confirmed')}>Confirm Order</Button>
                  )}
                  {selectedOrder.status === 'Confirmed' && (
-                    <Button variant="success" className="rounded-pill px-4" onClick={() => handleUpdateOrderStatus(selectedOrder.id, 'Completed')}>Mark Completed</Button>
+                    <Button className="rounded-pill px-4 border-0 fw-bold" style={{backgroundColor: '#198754', color: '#FFF'}} onClick={() => handleUpdateOrderStatus(selectedOrder.id, 'Completed')}>Mark Completed</Button>
                  )}
               </div>
             </Modal.Body>

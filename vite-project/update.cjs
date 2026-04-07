@@ -1,35 +1,6 @@
-import React, { useState } from 'react';
-import { 
-  Row, Col, Table, Card, Badge, Form, Button, 
-  Collapse, Modal, Container 
-} from 'react-bootstrap';
-import { 
-  LayoutDashboard, ShoppingCart, Camera, Users, Package, Calendar, 
-  Image as ImageIcon, CreditCard, Settings, ChevronDown, 
-  ChevronRight, Bell, Menu, MoreVertical, Plus, Trash2 
-} from 'lucide-react';
-import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+const fs = require('fs');
 
-// --- 1. MOCK DATA ---
-const INITIAL_ORDERS = [
-  { id: '12478', date: '2024-08-12', client: 'Janet Adebayo', amount: 25000, status: 'Completed', location: 'Manchester' },
-  { id: '24587', date: '2024-08-14', client: 'James Smith', amount: 15200, status: 'Confirmed', location: 'London' },
-  { id: '45789', date: '2024-08-15', client: 'Robert Doe', amount: 8500, status: 'New', location: 'Leeds' },
-  { id: '99887', date: '2024-08-16', client: 'Alice Brown', amount: 0, status: 'Cancelled', location: 'Liverpool' },
-];
-
-const INITIAL_SERVICES = [
-  { id: 1, name: 'Wedding Photography', price: '$2000', category: 'Wedding' },
-  { id: 2, name: 'Portrait Session', price: '$300', category: 'Portrait' },
-];
-
-const INITIAL_STUDIOS = [
-  { id: 1, name: 'Downtown Loft', location: '123 Main St', capacity: 10 },
-  { id: 2, name: 'Garden Studio', location: '456 Oak Ln', capacity: 25 },
-];
-
-// --- 2. HELPER COMPONENTS ---
-const StatusBadge = ({ status }) => {
+const replacement = `const StatusBadge = ({ status }) => {
   let style = { backgroundColor: 'transparent', color: '#F5F5F7', border: '1px solid rgba(197, 160, 89, 0.3)' };
   if (status === 'Completed') style = { backgroundColor: 'rgba(197, 160, 89, 0.4)', color: '#F5F5F7' };
   if (status === 'Confirmed') style = { backgroundColor: 'rgba(197, 160, 89, 0.2)', color: '#F5F5F7' };
@@ -43,7 +14,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const SidebarItem = ({ icon: IconComponent, label, active, hasSubmenu, isOpen, onClick, children }) => (
+const SidebarItem = ({ icon: Icon, label, active, hasSubmenu, isOpen, onClick, children }) => (
   <>
     <div 
       onClick={onClick} 
@@ -60,7 +31,7 @@ const SidebarItem = ({ icon: IconComponent, label, active, hasSubmenu, isOpen, o
       }}
     >
       <div className="d-flex align-items-center gap-3">
-        {IconComponent && <IconComponent size={20} strokeWidth={1.5} color={active ? '#C5A059' : '#A0A0A0'} />}
+        <Icon size={20} strokeWidth={1.5} color={active ? '#C5A059' : '#A0A0A0'} />
         <span className="fw-medium" style={{ fontSize: '0.95rem' }}>{label}</span>
       </div>
       {hasSubmenu && (isOpen ? <ChevronDown size={16} color={active ? '#C5A059' : '#A0A0A0'} /> : <ChevronRight size={16} color={active ? '#C5A059' : '#A0A0A0'} />)}
@@ -174,7 +145,7 @@ const FullPhotographyAdmin = () => {
                     <td>{order.client}</td>
                     <td style={{ color: '#A0A0A0' }}>{order.date}</td>
                     <td>{order.location}</td>
-                    <td className="fw-bold">$${order.amount.toLocaleString()}</td>
+                    <td className="fw-bold">$\${order.amount.toLocaleString()}</td>
                     <td><StatusBadge status={order.status} /></td>
                     <td>
                        <Button size="sm" style={{ backgroundColor: 'transparent', border: '1px solid rgba(197,160,89,0.3)', color: '#C5A059' }}><MoreVertical size={14}/></Button>
@@ -359,7 +330,7 @@ const FullPhotographyAdmin = () => {
         </Modal.Header>
         <Modal.Body>
           <Form.Label style={{ color: '#A0A0A0' }}>Name</Form.Label>
-          <Form.Control value={newItemName} onChange={(e) => setNewItemName(e.target.value)} placeholder={`Enter ${modalType} Name`} style={{ backgroundColor: '#1A1A1B', border: '1px solid rgba(197, 160, 89, 0.3)', color: '#F5F5F7' }} className="shadow-none focus-ring focus-ring-warning" />
+          <Form.Control value={newItemName} onChange={(e) => setNewItemName(e.target.value)} placeholder={\`Enter \${modalType} Name\`} style={{ backgroundColor: '#1A1A1B', border: '1px solid rgba(197, 160, 89, 0.3)', color: '#F5F5F7' }} className="shadow-none focus-ring focus-ring-warning" />
         </Modal.Body>
         <Modal.Footer style={{ borderTop: '0' }}>
           <Button variant="link" style={{ color: '#A0A0A0', textDecoration: 'none' }} onClick={() => setShowModal(false)}>Close</Button>
@@ -371,4 +342,19 @@ const FullPhotographyAdmin = () => {
   );
 };
 
-export default FullPhotographyAdmin;
+export default FullPhotographyAdmin;`;
+
+const filePath = 'c:/testing/vite-project/src/AdminDashboard.jsx';
+const content = fs.readFileSync(filePath, 'utf8');
+const lines = content.split('\\n');
+
+const startIdx = lines.findIndex(l => l.includes('const StatusBadge ='));
+const endIdx = lines.findIndex(l => l.includes('export default FullPhotographyAdmin;'));
+
+if (startIdx !== -1 && endIdx !== -1) {
+  const newContent = lines.slice(0, startIdx).join('\\n') + '\\n' + replacement + '\\n';
+  fs.writeFileSync(filePath, newContent);
+  console.log('Successfully updated AdminDashboard.jsx');
+} else {
+  console.log('Could not find split boundaries.');
+}

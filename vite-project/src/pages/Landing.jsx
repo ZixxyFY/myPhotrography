@@ -1,356 +1,593 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
+import {
+  Mail, MapPin, ExternalLink, Check, Send,
+  Instagram, Facebook, Twitter, Camera, ArrowRight
+} from 'lucide-react';
 import Navbar from '../components/Navbar';
-// import FormInput from '../components/FormInput';
+import '../styles/landing.css';
 
-/* ===== PORTFOLIO / TEAM DATA ===== */
-const portfolioData = [
+/* ===== TEAM DATA (3 members per spec) ===== */
+const teamData = [
   {
-    img: "https://randomuser.me/api/portraits/men/32.jpg",
-    name: "Rohit Sharma",
-    role: "Wedding Photographer",
-    phone: "+91 98765 43210",
-    instagram: "#",
-    facebook: "#",
-    twitter: "#"
+    img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
+    name: 'Vikram Das',
+    role: 'Event Photography',
   },
   {
-    img: "https://randomuser.me/api/portraits/women/44.jpg",
-    name: "Ananya Singh",
-    role: "Portrait Photographer",
-    phone: "+91 91234 56789",
-    instagram: "#",
-    facebook: "#",
-    twitter: "#"
+    img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
+    name: 'Rohit Sharma',
+    role: 'Wedding Photography',
   },
   {
-    img: "https://randomuser.me/api/portraits/men/65.jpg",
-    name: "Vikram Das",
-    role: "Event Photographer",
-    phone: "+91 99887 66554",
-    instagram: "#",
-    facebook: "#",
-    twitter: "#"
+    img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80',
+    name: 'Neha Patel',
+    role: 'Fashion Photography',
   },
-  {
-    img: "https://randomuser.me/api/portraits/women/68.jpg",
-    name: "Neha Patel",
-    role: "Fashion Photographer",
-    phone: "+91 90909 12121",
-    instagram: "#",
-    facebook: "#",
-    twitter: "#"
-  }
 ];
 
-const Landing = ({ user, onLoginClick, onDashboardClick }) => {
-  const [formData, setFormData] = useState({
-    cName: '', cEmail: '', cSubject: '', cMessage: ''
-  });
+/* ===== MARQUEE ITEMS ===== */
+const marqueeItems = [
+  'SONY', 'CANON LENS EF 40mm', 'CANON LENS EF-S 24mm',
+  'CANON LENS EF 50mm', 'NIKON Z9', 'SIGMA ART 35mm',
+  'SONY GM 24-70mm', 'FUJIFILM X-T5',
+];
 
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  // Slideshow Effect
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveIndex(prev => (prev + 1) % portfolioData.length);
-    }, 3000); 
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleContactChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  }
-
- const handleContactSubmit = async (e) => {
-  e.preventDefault();
-
-  try {
-    const response = await fetch('http://localhost:5000/api/contact', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        cName: formData.cName,
-        cEmail: formData.cEmail,
-        cMessage: formData.cMessage
-      })
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      alert('Message sent successfully!');
-      setFormData({
-        cName: '',
-        cEmail: '',
-        cSubject: '',
-        cMessage: ''
-      });
-    } else {
-      alert(data.message || 'Failed to send message');
-    }
-
-  } catch (error) {
-    console.error('Error sending contact form:', error);
-    alert('Server error. Please try again later.');
-  }
+/* ===== RIPPLE HELPER ===== */
+const createRipple = (e) => {
+  const button = e.currentTarget;
+  const circle = document.createElement('span');
+  const diameter = Math.max(button.clientWidth, button.clientHeight);
+  const radius = diameter / 2;
+  const rect = button.getBoundingClientRect();
+  circle.style.width = circle.style.height = `${diameter}px`;
+  circle.style.left = `${e.clientX - rect.left - radius}px`;
+  circle.style.top = `${e.clientY - rect.top - radius}px`;
+  circle.classList.add('ripple');
+  const existing = button.querySelector('.ripple');
+  if (existing) existing.remove();
+  button.appendChild(circle);
 };
 
-  // Custom Styles for the specific design elements
-  const styles = {
-    yellowBar: {
-      position: 'fixed',
-      left: 0,
-      top: 0,
-      bottom: 0,
-      width: '80px',
-      backgroundColor: '#FFC107',
-      zIndex: 1000,
-      display: 'none' // Hidden on mobile, shown on desktop via media query logic usually, but handled inline below
-    },
-    mainContent: {
-      marginLeft: '0px', // Adjusted for mobile first
-      backgroundColor: '#101010',
-      minHeight: '100vh',
-      color: 'white',
-      overflowX: 'hidden'
-    },
-    cornerBracket: {
-      position: 'absolute',
-      width: '20px',
-      height: '20px',
-      borderColor: '#777',
-      borderStyle: 'solid',
-      transition: 'all 0.3s'
-    },
-    circleBg: {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: '500px',
-      height: '500px',
-      border: '2px dashed rgba(255,255,255,0.1)',
-      borderRadius: '50%',
-      zIndex: 0
+const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }) => {
+  /* ─── STATE ─── */
+  const [formData, setFormData] = useState({ cName: '', cEmail: '', cMessage: '' });
+  const [storyOpen, setStoryOpen] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [newsletterDone, setNewsletterDone] = useState(false);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+
+  /* ─── REFS for scroll reveal ─── */
+  const revealRefs = useRef([]);
+
+  const addRevealRef = useCallback((el) => {
+    if (el && !revealRefs.current.includes(el)) {
+      revealRefs.current.push(el);
+    }
+  }, []);
+
+  /* ─── SCROLL REVEAL (IntersectionObserver) ─── */
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    revealRefs.current.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  /* ─── HANDLERS ─── */
+  const handleContactChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch('http://localhost:5000/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          cName: formData.cName,
+          cEmail: formData.cEmail,
+          cMessage: formData.cMessage
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setToastVisible(true);
+        setFormData({ cName: '', cEmail: '', cMessage: '' });
+        setTimeout(() => setToastVisible(false), 3500);
+      } else {
+        alert(data.message || 'Failed to send message');
+      }
+
+    } catch (error) {
+      console.error('Error sending contact form:', error);
+      alert('Server error. Please try again later.');
     }
   };
 
+  const handleNewsletter = () => {
+    if (!newsletterEmail.trim()) return;
+    setNewsletterDone(true);
+  };
+
   return (
-    <div className="d-flex">
-      {/* 1. Left Yellow Sidebar (Visible on large screens) */}
-      <div className="d-none d-lg-block" style={{...styles.yellowBar, width: '80px'}}></div>
+    <div className="landing-root">
 
-      {/* 2. Main Content Wrapper */}
-      <div style={{...styles.mainContent, width: '100%'}} className="flex-grow-1 ps-lg-5">
-        
-        {/* Navbar */}
-        <Navbar user={user} onLoginClick={onLoginClick} onDashboardClick={onDashboardClick} />
+      {/* ── NAVBAR ─── */}
+      <Navbar
+        user={user}
+        onLoginClick={onLoginClick}
+        onDashboardClick={onDashboardClick}
+        onLogout={onLogout}
+      />
 
-        {/* Hero Section */}
-        <header id="home" className="container-fluid py-5 d-flex align-items-center" style={{minHeight: '85vh', position: 'relative'}}>
-           <div className="row w-100 align-items-center">
-             
-             {/* Left Text Content */}
-             <div className="col-lg-6 ps-lg-5 mb-5 mb-lg-0" style={{zIndex: 2}}>
-                <h6 className="text-warning text-uppercase mb-3" style={{letterSpacing: '3px', fontSize: '0.9rem'}}>Photography Studio</h6>
-                
-                <div className="position-relative mb-4 p-2">
-                  {/* Top Left Bracket */}
-                  <span style={{...styles.cornerBracket, borderTopWidth: '1px', borderLeftWidth: '1px', top: 0, left: 0}}></span>
-                  
-                  <h1 className="display-3 fw-bold text-white mb-0" style={{lineHeight: '1.1'}}>Capture Your</h1>
-                  <h1 className="display-3 fw-bold text-warning mb-0" style={{lineHeight: '1.1'}}>Perfect Moments.</h1>
-                  
-                  {/* Bottom Right Bracket */}
-                  <span style={{...styles.cornerBracket, borderBottomWidth: '1px', borderRightWidth: '1px', bottom: 0, right: '20%'}}></span>
-                </div>
-             </div>
+      {/* ── HERO SECTION ──────────────────────────────────────────── */}
+      <section id="home" className="lp-hero">
+        {/* Background */}
+        <div className="lp-hero__bg">
+          <img
+            src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1920&q=85"
+            alt="Photography studio with cinematic lighting"
+            fetchPriority="high"
+          />
+        </div>
 
-             {/* Right Image Content */}
-             <div className="col-lg-6 position-relative text-center">
-                {/* Background Concentric Circles Effect */}
-                <div style={{...styles.circleBg, width: '400px', height: '400px', opacity: 0.3}}></div>
-                <div style={{...styles.circleBg, width: '550px', height: '550px', opacity: 0.2}}></div>
-                <div style={{...styles.circleBg, width: '700px', height: '700px', opacity: 0.1, borderStyle: 'solid'}}></div>
-                
-                {/* Main Image */}
-                <img 
-                  src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80" 
-                  alt="Hands holding camera" 
-                  className="img-fluid position-relative"
-                  style={{zIndex: 1, maxHeight: '550px', transform: 'scale(1.1)'}} 
-                />
-             </div>
-           </div>
-        </header>
+        {/* Content */}
+        <div className="lp-hero__content">
+          <p className="lp-hero__subtitle">Photography Studio</p>
 
-        {/* About Section */}
-        <section id="about" className="section-padding py-5" style={{backgroundColor: '#151515'}}>
-          <div className="container">
-            <div className="row align-items-center justify-content-center">
-              <div className="col-lg-4 mb-5 mb-lg-0 position-relative">
-                {/* Decorative border frame */}
-                <div style={{position: 'absolute', top: '-20px', left: '-20px', width: '100%', height: '100%', border: '2px solid #333', zIndex: 0}}></div>
-                <img 
-                  src="https://unsplash.com/photos/54fAtCSq6gQ/download" 
-                  className="img-fluid position-relative shadow-lg" 
-                  alt="Person holding black and grey pentax camera"
-                  style={{zIndex: 1}}
-                />
+          <h1 className="lp-hero__headline">
+            Capture Your
+            <span>Perfect Moments.</span>
+          </h1>
+
+          <p className="lp-hero__description">
+            We specialize in turning fleeting moments into timeless memories.
+            From intimate portraits to grand celebrations, our lens captures
+            the essence of every story worth telling.
+          </p>
+
+          <div className="lp-hero__ctas">
+            <button
+              className="lp-btn-gold"
+              onClick={(e) => {
+                createRipple(e);
+                const el = document.querySelector('#contact');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              <Camera size={18} />
+              Book a Shoot
+            </button>
+            <button
+              className="lp-btn-ghost"
+              onClick={(e) => {
+                createRipple(e);
+                onShopClick && onShopClick();
+              }}
+            >
+              Browse Gear
+              <ArrowRight size={16} />
+            </button>
+          </div>
+        </div>
+
+        {/* Marquee */}
+        <div className="lp-marquee">
+          <div className="lp-marquee__track">
+            {[...marqueeItems, ...marqueeItems].map((item, i) => (
+              <span className="lp-marquee__item" key={i}>{item}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── ABOUT SECTION ("Who We Are") ──────────────────────────── */}
+      <section id="about" className="lp-section lp-section--alt">
+        <div className="lp-about" ref={addRevealRef}>
+          {/* Left — Image */}
+          <div className="lp-about__image-wrapper lp-reveal" ref={addRevealRef}>
+            <img
+              className="lp-about__image"
+              src="https://images.unsplash.com/photo-1452587925148-ce544e77e70d?auto=format&fit=crop&w=800&q=80"
+              alt="Photographer capturing the perfect shot"
+              loading="lazy"
+            />
+          </div>
+
+          {/* Right — Text */}
+          <div className="lp-about__text lp-reveal" ref={addRevealRef}>
+            <span className="lp-section__label">Who We Are</span>
+            <h2 className="lp-section__title">
+              We Tell Stories Through The Lens
+            </h2>
+            <p className="lp-about__description">
+              Founded in 2020, our studio has been dedicated to capturing the
+              essence of life's most beautiful moments. We believe that every
+              picture tells a story, and we are here to help you write yours.
+              With a team of passionate artists and state-of-the-art equipment,
+              we deliver memories that last a lifetime.
+            </p>
+
+            {/* Stats */}
+            <div className="lp-about__stats">
+              <div>
+                <div className="lp-about__stat-number">150+</div>
+                <div className="lp-about__stat-label">Weddings Shot</div>
               </div>
-              <div className="col-lg-6 ps-lg-5">
-                <h6 className="text-warning fw-bold text-uppercase mb-3" style={{letterSpacing: '2px'}}>Who We Are</h6>
-                <h2 className="display-5 fw-bold text-white mb-4">We Tell Stories Through The Lens</h2>
-                <p className="text-white-50 lead mb-4">
-                  Founded in 2020, our studio has been dedicated to capturing the essence of life's most beautiful moments. We believe that every picture tells a story, and we are here to help you write yours.
-                </p>
-                <div className="row mb-4">
-                  <div className="col-6">
-                    <h2 className="text-warning fw-bold">150+</h2>
-                    <p className="text-white-50 small">Weddings Shot</p>
-                  </div>
-                  <div className="col-6">
-                    <h2 className="text-warning fw-bold">500+</h2>
-                    <p className="text-white-50 small">Happy Clients</p>
-                  </div>
-                </div>
-                <button className="btn btn-outline-warning rounded-0 px-4 py-2 text-uppercase fw-bold">Read Our Story</button>
+              <div>
+                <div className="lp-about__stat-number">500+</div>
+                <div className="lp-about__stat-label">Happy Clients</div>
               </div>
+            </div>
+
+            <div>
+              <button
+                className="lp-btn-story"
+                onClick={(e) => { createRipple(e); setStoryOpen(true); }}
+              >
+                Read Our Story
+              </button>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Portfolio Section */}
-        <section id="portfolio" className="section-padding overflow-hidden py-5 mb-5" style={{background: '#1a1a1a'}}>
-          <div className="container text-center">
-            <h2 className="mb-5 text-white">Our Expert Team</h2>
-            
-            {/* UPDATED HEIGHT to 600px to prevent overlap with Contact section */}
-            <div className="position-relative d-flex justify-content-center align-items-center" style={{ height: "600px" }}>
-              {portfolioData.map((item, index) => {
-                const total = portfolioData.length;
-                const isCenter = index === activeIndex;
-                const isLeft = index === (activeIndex - 1 + total) % total;
-                const isRight = index === (activeIndex + 1) % total;
-                
-                let translateX = 0;
-                let scale = 0.6;
-                let opacity = 0.4;
-                let zIndex = 1;
-                
-                if (isCenter) { scale = 1; opacity = 1; zIndex = 10; } 
-                else if (isLeft) { translateX = -300; zIndex = 5; } 
-                else if (isRight) { translateX = 300; zIndex = 5; } 
-                else { opacity = 0; }
-                
-                if (opacity === 0) return null;
-                
-                return (
-                  <div key={index} className="card shadow border-0 bg-dark" style={{ position: "absolute", width: "280px", transform: `translateX(${translateX}px) scale(${scale})`, transition: "all 0.6s ease", opacity, zIndex }}>
-                    <img src={item.img} alt={item.name} className="card-img-top" style={{ height: "250px", objectFit: "cover", opacity: 0.9 }} />
-                    <div className="card-body text-white border-top border-secondary">
-                        <h5 className="fw-bold mb-1">{item.name}</h5>
-                        <p className="text-warning small fw-bold mb-2">{item.role}</p>
-                        <p className="small text-muted mb-3"><i className="fas fa-phone-alt me-1"></i>{item.phone}</p>
-                        
-                        <div className="d-flex justify-content-center gap-3">
-                            <a href={item.facebook} className="text-white-50" style={{ transition: 'color 0.3s' }}><i className="fab fa-facebook-f"></i></a>
-                            <a href={item.instagram} className="text-white-50" style={{ transition: 'color 0.3s' }}><i className="fab fa-instagram"></i></a>
-                            <a href={item.twitter} className="text-white-50" style={{ transition: 'color 0.3s' }}><i className="fab fa-twitter"></i></a>
-                        </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+      {/* ── SLIDE-OVER MODAL ("Our Journey") ──────────────────────── */}
+      <div
+        className={`lp-slideover-overlay${storyOpen ? ' open' : ''}`}
+        onClick={() => setStoryOpen(false)}
+      />
+      <div className={`lp-slideover${storyOpen ? ' open' : ''}`}>
+        <div className="lp-slideover__header">
+          <h3 className="lp-slideover__title">Our Journey</h3>
+          <button
+            className="lp-slideover__close"
+            onClick={() => setStoryOpen(false)}
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="lp-slideover__body">
+          <p>
+            It all began in a small studio apartment in Bhubaneswar, with
+            nothing more than a borrowed camera and a dream. In 2020, amidst
+            uncertainty, we saw an opportunity to tell stories that mattered —
+            stories of love, celebration, and the quiet beauty of everyday life.
+          </p>
+          <p>
+            What started as a passion project quickly grew into something
+            extraordinary. Our first wedding shoot was for a childhood friend,
+            and the joy we captured in those frames became our calling card.
+            Word spread, and soon we were documenting love stories across the
+            country.
+          </p>
+          <p>
+            Today, E-Imagination is more than a photography studio. We are a
+            collective of artists, storytellers, and dreamers. With over 150
+            weddings and 500+ happy clients, we've learned that the most
+            powerful photographs are the ones that make you feel something —
+            long after the moment has passed.
+          </p>
+          <p>
+            We invest in the finest equipment — from Sony Alpha bodies to Canon
+            L-series lenses — because your memories deserve nothing less than
+            perfection. Every frame we capture is a promise: that this moment
+            will live forever.
+          </p>
+          <div className="lp-slideover__signature">
+            <p style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: '1.2rem',
+              color: '#C5A059',
+              fontStyle: 'italic',
+              marginBottom: '0.25rem'
+            }}>
+              — The E-Imagination Team
+            </p>
+            <p style={{
+              fontSize: '0.78rem',
+              color: 'rgba(245,245,247,0.35)',
+              letterSpacing: '2px',
+              textTransform: 'uppercase'
+            }}>
+              Est. 2020 · Bhubaneswar
+            </p>
           </div>
-        </section>
-
-        {/* Contact Section */}
-        <section id="contact" className="section-padding py-5" style={{backgroundColor: '#101010'}}>
-          <div className="container">
-            <div className="text-center mb-5">
-              <h6 className="text-warning fw-bold text-uppercase">Get In Touch</h6>
-              <h2 className="text-white">Contact Us</h2>
-            </div>
-            <div className="row justify-content-center">
-              <div className="col-lg-4 mb-4 mb-lg-0">
-                <div className="d-flex align-items-center mb-4">
-                  <div className="bg-dark border border-secondary p-3 rounded-circle shadow-sm text-warning me-3"><i className="fas fa-envelope fa-lg"></i></div>
-                  <div><h5 className="mb-1 text-white">Email</h5><p className="mb-0 text-white-50 small">eImagination@studio.com</p></div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <div className="bg-dark border border-secondary p-3 rounded-circle shadow-sm text-warning me-3"><i className="fas fa-map-marker-alt fa-lg"></i></div>
-                  <div><h5 className="mb-1 text-white">Location</h5><p className="mb-0 text-white-50 small">Kaling Studios, Bhubaneswar</p></div>
-                </div>
-              </div>
-              <div className="col-lg-6">
-                <form className="bg-dark p-4 shadow-sm border border-secondary rounded" onSubmit={handleContactSubmit}>
-                  {/* Note: Ensure FormInput accepts style/className for dark mode, defaulting here to bootstrap classes for inputs */}
-                  <div className="mb-3">
-                      <label className="text-white-50 small">Name</label>
-                      <input type="text" name="cName" className="form-control bg-black text-white border-secondary" value={formData.cName} onChange={handleContactChange} />
-                  </div>
-                  <div className="mb-3">
-                      <label className="text-white-50 small">Email</label>
-                      <input type="email" name="cEmail" className="form-control bg-black text-white border-secondary" value={formData.cEmail} onChange={handleContactChange} />
-                  </div>
-                  <div className="mb-3">
-                      <label className="text-white-50 small">Message</label>
-                      <textarea className="form-control bg-black text-white border-secondary" rows="4" name="cMessage" value={formData.cMessage} onChange={handleContactChange}></textarea>
-                  </div>
-                  <button type="submit" className="btn btn-warning w-100 text-uppercase fw-bold">Send Message</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="pt-5 pb-4" style={{ backgroundColor: '#000', borderTop: '1px solid #222' }}>
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-5 mb-5 mb-lg-0">
-                 <h3 className="fw-normal mb-4 text-white" style={{ fontFamily: 'Georgia, serif', letterSpacing: '2px' }}>
-                   STUDIO
-                 </h3>
-                 <p className="text-white-50 small mb-4" style={{ maxWidth: '350px', lineHeight: '1.8' }}>
-                   Capturing moments that last a lifetime. Professional photography for all occasions.
-                 </p>
-                 <div className="d-flex gap-4">
-                   <a href="#" className="text-white-50"><i className="fab fa-instagram fa-lg"></i></a>
-                   <a href="#" className="text-white-50"><i className="fab fa-facebook-f fa-lg"></i></a>
-                   <a href="#" className="text-white-50"><i className="fab fa-twitter fa-lg"></i></a>
-                 </div>
-              </div>
-              <div className="col-lg-3 col-6">
-                <h6 className="text-white fw-bold mb-4 small">Quick Links</h6>
-                <ul className="list-unstyled small text-white-50 d-grid gap-3">
-                  <li><a href="#home" className="text-white-50 text-decoration-none">Home</a></li>
-                  <li><a href="#about" className="text-white-50 text-decoration-none">About</a></li>
-                  <li><a href="#portfolio" className="text-white-50 text-decoration-none">Portfolio</a></li>
-                  <li><a href="#contact" className="text-white-50 text-decoration-none">Contact</a></li>
-                </ul>
-              </div>
-              <div className="col-lg-4 col-6">
-                 <h6 className="text-white fw-bold mb-4 small">Newsletter</h6>
-                 <p className="text-white-50 small">Subscribe for latest updates and offers.</p>
-                 <div className="input-group mb-3">
-                   <input type="text" className="form-control bg-dark text-white border-secondary" placeholder="Email Address" />
-                   <button className="btn btn-warning" type="button">Go</button>
-                 </div>
-              </div>
-            </div>
-            <div className="mt-5 pt-4 border-top border-secondary">
-               <small className="text-white-50">&copy; 2026 Studio Inc. All Rights Reserved.</small>
-            </div>
-          </div>
-        </footer>
-
+        </div>
       </div>
+
+      {/* ── TEAM SECTION ──────────────────────────────────────────── */}
+      <section id="portfolio" className="lp-section">
+        <div className="lp-team">
+          <div className="lp-reveal" ref={addRevealRef} style={{ marginBottom: '1rem' }}>
+            <span className="lp-section__label" style={{ justifyContent: 'center' }}>
+              Meet The Artists
+            </span>
+            <h2 className="lp-section__title" style={{ textAlign: 'center' }}>
+              Our Expert Team
+            </h2>
+          </div>
+
+          <div className="lp-team__grid">
+            {teamData.map((member, index) => (
+              <div
+                className="lp-team__card lp-reveal"
+                key={member.name}
+                ref={addRevealRef}
+                style={{ transitionDelay: `${index * 0.1}s` }}
+              >
+                <img
+                  className="lp-team__card-image"
+                  src={member.img}
+                  alt={member.name}
+                  loading="lazy"
+                />
+                <div className="lp-team__card-overlay">
+                  <h3 className="lp-team__card-name">{member.name}</h3>
+                  <p className="lp-team__card-role">{member.role}</p>
+                </div>
+                <button className="lp-team__card-cta" onClick={(e) => createRipple(e)}>
+                  View Portfolio
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CONTACT SECTION ───────────────────────────────────────── */}
+      <section id="contact" className="lp-section lp-section--alt">
+        <div className="lp-contact">
+          <div className="lp-reveal" ref={addRevealRef} style={{ marginBottom: '3rem' }}>
+            <span className="lp-section__label">Get In Touch</span>
+            <h2 className="lp-section__title">Contact Us</h2>
+          </div>
+
+          <div className="lp-contact__grid">
+            {/* Left — Contact info */}
+            <div className="lp-contact__info lp-reveal" ref={addRevealRef}>
+              {/* Email */}
+              <div className="lp-contact__info-item">
+                <div className="lp-contact__info-icon">
+                  <Mail size={20} />
+                </div>
+                <div>
+                  <div className="lp-contact__info-label">Email</div>
+                  <a
+                    href="mailto:elmagination@studio.com"
+                    className="lp-contact__info-value"
+                  >
+                    elmagination@studio.com
+                  </a>
+                </div>
+              </div>
+
+              {/* Location */}
+              <div className="lp-contact__info-item">
+                <div className="lp-contact__info-icon">
+                  <MapPin size={20} />
+                </div>
+                <div>
+                  <div className="lp-contact__info-label">Location</div>
+                  <div className="lp-contact__info-value">
+                    Kalinga Studios, Bhubaneswar
+                    <a
+                      href="https://maps.google.com/?q=Kalinga+Studios+Bhubaneswar"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="lp-contact__info-maps"
+                      aria-label="View on Maps"
+                      title="View on Maps"
+                    >
+                      <ExternalLink size={15} />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right — Form */}
+            <form
+              className="lp-contact__form lp-reveal"
+              ref={addRevealRef}
+              onSubmit={handleContactSubmit}
+            >
+              {/* Name */}
+              <div className="lp-floating-group">
+                <input
+                  type="text"
+                  name="cName"
+                  id="contact-name"
+                  placeholder=" "
+                  value={formData.cName}
+                  onChange={handleContactChange}
+                  required
+                />
+                <label htmlFor="contact-name">Name</label>
+              </div>
+
+              {/* Email */}
+              <div className="lp-floating-group">
+                <input
+                  type="email"
+                  name="cEmail"
+                  id="contact-email"
+                  placeholder=" "
+                  value={formData.cEmail}
+                  onChange={handleContactChange}
+                  required
+                />
+                <label htmlFor="contact-email">Email</label>
+              </div>
+
+              {/* Message */}
+              <div className="lp-floating-group">
+                <textarea
+                  name="cMessage"
+                  id="contact-message"
+                  placeholder=" "
+                  value={formData.cMessage}
+                  onChange={handleContactChange}
+                  required
+                />
+                <label htmlFor="contact-message">Message</label>
+              </div>
+
+              <button
+                type="submit"
+                className="lp-contact__submit"
+                onClick={createRipple}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <Send size={16} />
+                  Send Message
+                </span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TOAST NOTIFICATION ─────────────────────────────────── */}
+      <div className={`lp-toast${toastVisible ? ' show' : ''}`}>
+        <div className="lp-toast__icon">
+          <Check size={16} />
+        </div>
+        Message Sent Successfully!
+      </div>
+
+      {/* ── FOOTER ────────────────────────────────────────────────── */}
+      <footer className="lp-footer">
+        <div className="lp-footer__grid">
+          {/* Col 1 — Brand */}
+          <div>
+            <div className="lp-footer__brand">E-Imagination</div>
+            <p className="lp-footer__brand-text">
+              Capturing moments that last a lifetime. Professional photography
+              for all occasions — weddings, events, portraits, and fashion.
+            </p>
+            <div className="lp-footer__socials">
+              <a
+                href="https://www.instagram.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="lp-footer__social-icon"
+                aria-label="Instagram"
+              >
+                <Instagram size={18} />
+              </a>
+              <a
+                href="https://www.facebook.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="lp-footer__social-icon"
+                aria-label="Facebook"
+              >
+                <Facebook size={18} />
+              </a>
+              <a
+                href="https://twitter.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="lp-footer__social-icon"
+                aria-label="Twitter"
+              >
+                <Twitter size={18} />
+              </a>
+            </div>
+          </div>
+
+          {/* Col 2 — Services */}
+          <div>
+            <h4 className="lp-footer__heading">Services</h4>
+            <ul className="lp-footer__links">
+              <li><span className="lp-footer__link">Wedding Photography</span></li>
+              <li><span className="lp-footer__link">Event Photography</span></li>
+              <li><span className="lp-footer__link">Fashion Photography</span></li>
+              <li><span className="lp-footer__link">Portrait Photography</span></li>
+            </ul>
+          </div>
+
+          {/* Col 3 — Quick Links */}
+          <div>
+            <h4 className="lp-footer__heading">Quick Links</h4>
+            <ul className="lp-footer__links">
+              {[
+                ['Home', '#home'],
+                ['About', '#about'],
+                ['Portfolio', '#portfolio'],
+                ['Contact', '#contact'],
+              ].map(([label, href]) => (
+                <li key={label}>
+                  <a href={href} className="lp-footer__link">{label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Col 4 — Newsletter */}
+          <div>
+            <h4 className="lp-footer__heading">Newsletter</h4>
+            <p className="lp-footer__newsletter-text">
+              Subscribe for exclusive updates, behind-the-scenes content, and special offers.
+            </p>
+
+            {!newsletterDone ? (
+              <div className="lp-footer__newsletter-form">
+                <input
+                  type="email"
+                  className="lp-footer__newsletter-input"
+                  placeholder="Email Address"
+                  aria-label="Email address for newsletter"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                />
+                <button
+                  className="lp-footer__newsletter-btn"
+                  type="button"
+                  onClick={handleNewsletter}
+                >
+                  Go
+                </button>
+              </div>
+            ) : (
+              <div className="lp-footer__newsletter-success">
+                <div className="lp-footer__newsletter-check">
+                  <Check size={14} />
+                </div>
+                <p className="lp-footer__newsletter-msg">
+                  Welcome to the family! Check your mail for a 10% discount code.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Copyright */}
+        <div className="lp-footer__bottom">
+          <p className="lp-footer__copyright">
+            © 2026 Studio Inc. All Rights Reserved.
+          </p>
+        </div>
+      </footer>
+
     </div>
   );
 };
@@ -358,7 +595,9 @@ const Landing = ({ user, onLoginClick, onDashboardClick }) => {
 Landing.propTypes = {
   user: PropTypes.string,
   onLoginClick: PropTypes.func.isRequired,
-  onDashboardClick: PropTypes.func
+  onDashboardClick: PropTypes.func,
+  onLogout: PropTypes.func.isRequired,
+  onShopClick: PropTypes.func,
 };
 
 export default Landing;

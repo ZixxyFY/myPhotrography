@@ -15,22 +15,43 @@ const DashboardOverview = ({ orders, onRowClick }) => {
   const todayDate = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
   return (
-    <div className="animate-fade-in" style={{fontFamily: 'sans-serif'}}>
+    <div className="animate-fade-in" style={{fontFamily: "'Montserrat', sans-serif"}}>
       <div className="mb-4">
-         <h3 className="fw-bold mb-1">Dashboard Overview</h3>
-         <p className="text-muted">{todayDate}</p>
+         <h3 className="fw-bold mb-1" style={{fontFamily: "'Playfair Display', serif", color: '#F5F5F7'}}>Dashboard Overview</h3>
+         <p style={{color: '#A0A0A0'}}>{todayDate}</p>
       </div>
       
       <Row className="g-4 mb-4">
         <Col lg={8}>
-          <Card className="border-0 shadow-sm h-100 rounded-4">
+          <Card className="border-0 shadow-sm h-100 rounded-4" style={{backgroundColor: '#242426', border: '1px solid rgba(197, 160, 89, 0.3)'}}>
             <Card.Body className="p-4">
               <div className="d-flex justify-content-between align-items-center mb-4">
-                <h6 className="fw-bold mb-0">Revenue Report</h6>
+                <h6 className="fw-bold mb-0" style={{color: '#F5F5F7'}}>Revenue Report</h6>
                 <ButtonGroup size="sm">
-                   <Button variant={chartRange === '1M' ? 'dark' : 'outline-dark'} onClick={() => setChartRange('1M')}>1M</Button>
-                   <Button variant={chartRange === '6M' ? 'dark' : 'outline-dark'} onClick={() => setChartRange('6M')}>6M</Button>
-                   <Button variant={chartRange === '1Y' ? 'dark' : 'outline-dark'} onClick={() => setChartRange('1Y')}>1Y</Button>
+                   <Button 
+                     style={{
+                        backgroundColor: chartRange === '1M' ? '#C5A059' : 'transparent',
+                        borderColor: '#C5A059',
+                        color: chartRange === '1M' ? '#1A1A1B' : '#C5A059'
+                     }} 
+                     onClick={() => setChartRange('1M')}
+                   >1M</Button>
+                   <Button 
+                     style={{
+                        backgroundColor: chartRange === '6M' ? '#C5A059' : 'transparent',
+                        borderColor: '#C5A059',
+                        color: chartRange === '6M' ? '#1A1A1B' : '#C5A059'
+                     }} 
+                     onClick={() => setChartRange('6M')}
+                   >6M</Button>
+                   <Button 
+                     style={{
+                        backgroundColor: chartRange === '1Y' ? '#C5A059' : 'transparent',
+                        borderColor: '#C5A059',
+                        color: chartRange === '1Y' ? '#1A1A1B' : '#C5A059'
+                     }} 
+                     onClick={() => setChartRange('1Y')}
+                   >1Y</Button>
                 </ButtonGroup>
               </div>
               <div style={{ height: 250 }}>
@@ -38,14 +59,14 @@ const DashboardOverview = ({ orders, onRowClick }) => {
                   <AreaChart data={CHART_DATA[chartRange]}>
                     <defs>
                       <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#C5A059" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="#C5A059" stopOpacity={0.05}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                    <XAxis dataKey="n" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#64748b'}} />
-                    <Tooltip contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'}} />
-                    <Area type="monotone" dataKey="v" stroke="#0ea5e9" strokeWidth={3} fill="url(#colorVal)" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(197, 160, 89, 0.1)" />
+                    <XAxis dataKey="n" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#A0A0A0'}} />
+                    <Tooltip contentStyle={{backgroundColor: '#242426', borderRadius: '8px', border: '1px solid rgba(197, 160, 89, 0.3)', color: '#F5F5F7'}} itemStyle={{color: '#C5A059'}} />
+                    <Area type="monotone" dataKey="v" stroke="#C5A059" strokeWidth={3} fill="url(#colorVal)" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -54,20 +75,21 @@ const DashboardOverview = ({ orders, onRowClick }) => {
         </Col>
         <Col lg={4}>
           <div className="d-flex flex-column gap-3 h-100">
-            <Card className="border-0 shadow-sm rounded-4 flex-grow-1 p-4">
-              <p className="text-muted small fw-bold text-uppercase mb-1">Total Earnings</p>
-              <h2 className="fw-bold mb-2 text-dark" style={{fontFamily: 'sans-serif'}}>$238,485</h2>
-              <small className="text-success fw-bold"><i className="fas fa-arrow-up me-1"></i>+14% vs last month</small>
+            <Card className="border-0 shadow-sm rounded-4 flex-grow-1 p-4" style={{backgroundColor: '#242426', border: '1px solid rgba(197, 160, 89, 0.3)'}}>
+              <p className="small fw-bold text-uppercase mb-1" style={{color: '#A0A0A0'}}>Total Earnings</p>
+              <h2 className="fw-bold mb-2" style={{fontFamily: "'Playfair Display', serif", color: '#C5A059'}}>$238,485</h2>
+              <small className="fw-bold" style={{color: '#198754'}}><i className="fas fa-arrow-up me-1"></i>+14% vs last month</small>
             </Card>
-            <Card className="border-0 shadow-sm rounded-4 flex-grow-1 p-4">
-              <p className="text-muted small fw-bold text-uppercase mb-1">Total Orders</p>
-              <h2 className="fw-bold mb-2 text-dark" style={{fontFamily: 'sans-serif'}}>84,382</h2>
-              <small className="text-success fw-bold"><i className="fas fa-arrow-up me-1"></i>+36% vs last year</small>
+            <Card className="border-0 shadow-sm rounded-4 flex-grow-1 p-4" style={{backgroundColor: '#242426', border: '1px solid rgba(197, 160, 89, 0.3)'}}>
+              <p className="small fw-bold text-uppercase mb-1" style={{color: '#A0A0A0'}}>Total Orders</p>
+              <h2 className="fw-bold mb-2" style={{fontFamily: "'Playfair Display', serif", color: '#C5A059'}}>84,382</h2>
+              <small className="fw-bold" style={{color: '#198754'}}><i className="fas fa-arrow-up me-1"></i>+36% vs last year</small>
             </Card>
           </div>
         </Col>
       </Row>
 
+      {/* NOTE: OrderTable also needs to be updated to fix the white background */}
       <OrderTable orders={orders} title="Recent Orders" onRowClick={onRowClick} />
     </div>
   );

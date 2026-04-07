@@ -1,53 +1,186 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { LayoutDashboard, User, LogOut } from 'lucide-react';
 
-const Navbar = ({ user, onLoginClick, onDashboardClick }) => {
+const Navbar = ({ user, onLoginClick, onDashboardClick, onLogout }) => {
+  const [scrolled, setScrolled] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Scroll listener for glassmorphism transition
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const navLinks = [
+    { label: 'Home', href: '#home' },
+    { label: 'About', href: '#about' },
+    { label: 'Portfolio', href: '#portfolio' },
+    { label: 'Contact', href: '#contact' },
+  ];
+
+  const getUserInitials = () => {
+    if (!user) return '';
+    const name = typeof user === 'string' ? user : user.name || '';
+    return name.charAt(0).toUpperCase();
+  };
+
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+    setMobileOpen(false);
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark pt-4 px-4 sticky-top pb-3" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(10px)' }}>
-      <div className="container-fluid">
-        <a className="navbar-brand text-warning fw-bold d-lg-none" href="#">STUDIO</a>
-        
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span className="navbar-toggler-icon"></span>
-        </button>
+    <>
+      <nav className={`lp-navbar${scrolled ? ' scrolled' : ''}`} id="lp-navbar">
+        {/* Brand */}
+        <a
+          href="#home"
+          className="lp-navbar__brand"
+          onClick={(e) => handleNavClick(e, '#home')}
+        >
+          E-Imagination
+        </a>
 
-        <div className="collapse navbar-collapse justify-content-between" id="navbarNav">
-          <ul className="navbar-nav gap-lg-4">
-            <li className="nav-item"><a className="nav-link text-white" href="#home">Home</a></li>
-            <li className="nav-item"><a className="nav-link text-white" href="#about">About us</a></li>
-            <li className="nav-item"><a className="nav-link text-white" href="#portfolio">Portfolio</a></li>
-            <li className="nav-item"><a className="nav-link text-white" href="#contact">Contact us</a></li>
-          </ul>
+        {/* Desktop nav links */}
+        <ul className="lp-navbar__links">
+          {navLinks.map(({ label, href }) => (
+            <li key={label}>
+              <a
+                href={href}
+                className="lp-navbar__link"
+                onClick={(e) => handleNavClick(e, href)}
+              >
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
 
-          <ul className="navbar-nav align-items-center">
-            {user ? (
-               <li className="nav-item">
-                 <button onClick={onDashboardClick} className="btn text-white fw-bold d-flex align-items-center gap-2" style={{background: 'none', border: 'none'}}>
-                   <div className="bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center" style={{width: '35px', height: '35px'}}>
-                     <i className="fas fa-user"></i>
-                   </div>
-                   Hi, {typeof user === 'string' ? user : user.name}
-                 </button>
-               </li>
-            ) : (
-               <li className="nav-item">
-                 <button onClick={onLoginClick} className="btn text-white d-flex align-items-center gap-2" style={{background: 'none', border: 'none'}}>
-                   <i className="fas fa-user text-warning"></i> 
-                   <span className="fw-500">Sign In | Log In</span>
-                 </button>
-               </li>
-            )}
-          </ul>
+        {/* Auth section */}
+        <div className="lp-navbar__auth" style={{ display: 'flex', alignItems: 'center' }}>
+          {user ? (
+            <div className="lp-navbar__avatar-wrapper" ref={dropdownRef}>
+              <div
+                className="lp-navbar__avatar"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                role="button"
+                aria-label="User menu"
+                tabIndex={0}
+              >
+                {getUserInitials()}
+              </div>
+
+              <div className={`lp-navbar__dropdown${dropdownOpen ? ' open' : ''}`}>
+                <button
+                  className="lp-navbar__dropdown-item"
+                  onClick={() => { setDropdownOpen(false); onDashboardClick && onDashboardClick(); }}
+                >
+                  <LayoutDashboard size={16} />
+                  Dashboard
+                </button>
+                <button
+                  className="lp-navbar__dropdown-item"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  <User size={16} />
+                  Profile
+                </button>
+                <button
+                  className="lp-navbar__dropdown-item logout"
+                  onClick={() => { setDropdownOpen(false); onLogout && onLogout(); }}
+                >
+                  <LogOut size={16} />
+                  Logout
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              className="lp-navbar__login-btn"
+              onClick={onLoginClick}
+            >
+              Login
+            </button>
+          )}
         </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className="lp-navbar__hamburger"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle menu"
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      </nav>
+
+      {/* Mobile menu */}
+      <div className={`lp-navbar__mobile-menu${mobileOpen ? ' open' : ''}`}>
+        {navLinks.map(({ label, href }) => (
+          <a
+            key={label}
+            href={href}
+            className="lp-navbar__link"
+            onClick={(e) => handleNavClick(e, href)}
+          >
+            {label}
+          </a>
+        ))}
+        {user ? (
+          <>
+            <button
+              className="lp-navbar__dropdown-item"
+              onClick={() => { setMobileOpen(false); onDashboardClick && onDashboardClick(); }}
+            >
+              <LayoutDashboard size={16} />
+              Dashboard
+            </button>
+            <button
+              className="lp-navbar__dropdown-item logout"
+              onClick={() => { setMobileOpen(false); onLogout && onLogout(); }}
+            >
+              <LogOut size={16} />
+              Logout
+            </button>
+          </>
+        ) : (
+          <button
+            className="lp-navbar__login-btn"
+            onClick={() => { setMobileOpen(false); onLoginClick(); }}
+            style={{ marginTop: '0.5rem', alignSelf: 'flex-start' }}
+          >
+            Login
+          </button>
+        )}
       </div>
-    </nav>
+    </>
   );
 };
 
 Navbar.propTypes = {
   user: PropTypes.any,
   onLoginClick: PropTypes.func.isRequired,
-  onDashboardClick: PropTypes.func.isRequired
+  onDashboardClick: PropTypes.func,
+  onLogout: PropTypes.func,
 };
 
 export default Navbar;

@@ -7,7 +7,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserDashboard from './pages/user/UserDashboard';
 import './styles/App.css';
 import './styles/theme.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 const App = () => {
   const [currentView, setCurrentView] = useState('landing');

@@ -1,25 +1,166 @@
+export const EQUIPMENT_CATEGORIES = [
+  { id: 'all', label: 'All Equipment', icon: 'grid' },
+  { id: 'camera', label: 'Cameras', icon: 'camera' },
+  { id: 'lens', label: 'Lenses', icon: 'aperture' },
+  { id: 'drone', label: 'Drones', icon: 'plane' },
+  { id: 'lighting', label: 'Lighting', icon: 'zap' },
+  { id: 'audio', label: 'Audio', icon: 'mic' },
+  { id: 'accessory', label: 'Accessories', icon: 'package' },
+];
+
 export const MOCK_EQUIPMENT = [
   // --- CAMERAS ---
-  { id: 1, name: "Canon EOS R5 Body", price: "2,500", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=500&q=60" },
-  { id: 2, name: "Sony A7 III", price: "2,000", image: "https://images.unsplash.com/photo-1519183071298-a2962feb14f4?auto=format&fit=crop&w=500&q=60" },
-  
+  {
+    id: 1,
+    name: 'Sony A7 III',
+    category: 'camera',
+    price: 2000,
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=600&q=80',
+    status: 'available',
+    rating: 4.8,
+    specs: 'Full-Frame · 24.2 MP · 4K Video',
+    description: 'The Sony A7 III is a versatile full-frame mirrorless camera ideal for both photo and video work.',
+  },
+  {
+    id: 2,
+    name: 'Canon EOS R5',
+    category: 'camera',
+    price: 2500,
+    image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=80',
+    status: 'available',
+    rating: 4.9,
+    specs: 'Full-Frame · 45 MP · 8K RAW',
+    description: 'Canon\'s flagship mirrorless with unmatched resolution and blazing autofocus.',
+  },
+  {
+    id: 13,
+    name: 'Nikon Z9',
+    category: 'camera',
+    price: 3000,
+    image: 'https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?auto=format&fit=crop&w=600&q=80',
+    status: 'booked',
+    rating: 4.9,
+    specs: 'Full-Frame · 45.7 MP · 8K Video',
+    description: 'Nikon\'s professional flagship with stacked sensor and blackout-free EVF.',
+  },
+
   // --- DRONES & ACTION ---
-  { id: 6, name: "GoPro Hero 10", price: "600", image: "https://images.unsplash.com/photo-1564463836205-aca312724fd1?auto=format&fit=crop&w=500&q=60" },
-  { id: 7, name: "DJI Mavic 3 Cine", price: "3,500", image: "https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&w=500&q=60" },
+  {
+    id: 6,
+    name: 'GoPro Hero 10',
+    category: 'drone',
+    price: 600,
+    image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=600&q=80',
+    status: 'available',
+    rating: 4.5,
+    specs: '5.3K · HyperSmooth 4.0 · Waterproof',
+    description: 'Rugged action camera with HyperSmooth stabilization for extreme shoots.',
+  },
+  {
+    id: 7,
+    name: 'DJI Mavic 3',
+    category: 'drone',
+    price: 3500,
+    image: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=600&q=80',
+    status: 'available',
+    rating: 4.7,
+    specs: 'Hasselblad Camera · 5.1K · 46 min Flight',
+    description: 'Professional aerial cinematography with Hasselblad imaging and long flight time.',
+  },
 
   // --- LENSES ---
-  { id: 5, name: "Sigma 85mm f/1.4 Art", price: "900", image: "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?auto=format&fit=crop&w=500&q=60" },
-  { id: 8, name: "Sony 24-70mm GM", price: "1,200", image: "https://images.unsplash.com/photo-1616423664033-bb6872901c7b?auto=format&fit=crop&w=500&q=60" },
-  { id: 9, name: "Canon RF 70-200mm", price: "1,400", image: "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?auto=format&fit=crop&w=500&q=60" },
+  {
+    id: 5,
+    name: 'Sigma 85mm f/1.4 Art',
+    category: 'lens',
+    price: 900,
+    image: 'https://images.unsplash.com/photo-1617005082133-548c4dd27f35?auto=format&fit=crop&w=600&q=80',
+    status: 'available',
+    rating: 4.8,
+    specs: 'f/1.4 · AF · Full-Frame',
+    description: 'Renowned portrait lens with razor-sharp detail and creamy bokeh.',
+  },
+  {
+    id: 8,
+    name: 'Sony 24-70mm GM',
+    category: 'lens',
+    price: 1200,
+    image: 'https://images.unsplash.com/photo-1512790182412-b19e6d62bc39?auto=format&fit=crop&w=600&q=80',
+    status: 'booked',
+    rating: 4.7,
+    specs: 'f/2.8 · GM · Full-Frame',
+    description: 'Sony\'s workhorse zoom lens — versatile, sharp, and fast.',
+  },
+  {
+    id: 9,
+    name: 'Canon RF 70-200mm',
+    category: 'lens',
+    price: 1400,
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=600&q=80',
+    status: 'available',
+    rating: 4.9,
+    specs: 'f/2.8L · IS USM · Full-Frame',
+    description: 'Professional telephoto zoom, perfect for events and sports.',
+  },
 
-  // --- STABILIZERS & GIMBALS ---
-  { id: 3, name: "DJI Ronin-S Gimbal", price: "800", image: "https://images.unsplash.com/photo-1533649725832-72367d26b488?auto=format&fit=crop&w=500&q=60" },
-  
-  // --- LIGHTING & AUDIO ---
-  { id: 4, name: "Godox AD200 Pro", price: "500", image: "https://images.unsplash.com/photo-1587304673646-60e42d7a2283?auto=format&fit=crop&w=500&q=60" },
-  { id: 10, name: "Aputure 120d II Light", price: "1,500", image: "https://images.unsplash.com/photo-1527011046414-4781f1f94f8c?auto=format&fit=crop&w=500&q=60" },
-  { id: 11, name: "Rode Wireless GO II", price: "600", image: "https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?auto=format&fit=crop&w=500&q=60" },
-  
+  // --- LIGHTING ---
+  {
+    id: 4,
+    name: 'Godox AD200 Pro',
+    category: 'lighting',
+    price: 500,
+    image: 'https://images.unsplash.com/photo-1542567455-cd733f23fbb1?auto=format&fit=crop&w=600&q=80',
+    status: 'available',
+    rating: 4.6,
+    specs: '200Ws · TTL · HSS · 2.4G',
+    description: 'Compact and powerful strobe with TTL support for on-the-go lighting.',
+  },
+  {
+    id: 10,
+    name: 'Aputure 120d II',
+    category: 'lighting',
+    price: 1500,
+    image: 'https://images.unsplash.com/photo-1527011046414-4781f1f94f8c?auto=format&fit=crop&w=600&q=80',
+    status: 'booked',
+    rating: 4.8,
+    specs: '120W COB · 5500K · DMX',
+    description: 'Cinema-grade daylight LED for studio and location shoots.',
+  },
+
+  // --- AUDIO ---
+  {
+    id: 11,
+    name: 'Rode Wireless GO II',
+    category: 'audio',
+    price: 600,
+    image: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?auto=format&fit=crop&w=600&q=80',
+    status: 'available',
+    rating: 4.5,
+    specs: 'Dual-Channel · 200m Range · Internal Record',
+    description: 'Ultra-compact wireless mic system for interviews and BTS audio.',
+  },
+
   // --- ACCESSORIES ---
-  { id: 12, name: "Manfrotto Tripod", price: "400", image: "https://images.unsplash.com/photo-1534234828563-025313a968a5?auto=format&fit=crop&w=500&q=60" }
+  {
+    id: 3,
+    name: 'DJI Ronin-S Gimbal',
+    category: 'accessory',
+    price: 800,
+    image: 'https://images.unsplash.com/photo-1625902161685-ce1bb24fa752?auto=format&fit=crop&w=600&q=80',
+    status: 'available',
+    rating: 4.4,
+    specs: '3-Axis · 3.6 kg Payload · 12hr Battery',
+    description: 'Professional gimbal for smooth cinematic video across mirrorless and DSLR.',
+  },
+  {
+    id: 12,
+    name: 'Manfrotto MT055 Tripod',
+    category: 'accessory',
+    price: 400,
+    image: 'https://images.unsplash.com/photo-1520390115510-11fa62529221?auto=format&fit=crop&w=600&q=80',
+    status: 'available',
+    rating: 4.3,
+    specs: 'Aluminum · 8 kg Payload · 170 cm Max',
+    description: 'Industry-standard tripod built for stability and durability.',
+  },
 ];
