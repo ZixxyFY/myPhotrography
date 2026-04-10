@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 // Connect MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/photographyDB')
+mongoose.connect('mongodb://127.0.0.1:27017/trivydb')
   .then(() => console.log('MongoDB Connected Successfully'))
   .catch((err) => console.log('MongoDB Error:', err));
 
