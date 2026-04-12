@@ -32,7 +32,6 @@ const SidebarItem = ({ icon: Icon, label, active, hasSubmenu, isOpen, onClick, c
   <>
     <div 
       onClick={onClick} 
-      // FIX: Removed 'sidebar-link' entirely so global CSS cannot force it to be white
       className={`d-flex justify-content-between align-items-center ${active ? 'fw-bold' : ''}`} 
       style={{
         cursor: 'pointer', 
@@ -175,6 +174,45 @@ const Dashboard = ({ user, onLogout }) => {
   return (
     <div className="d-flex min-vh-100 ds-layout" style={{ backgroundColor: '#1A1A1B', color: '#F5F5F7', fontFamily: "'Montserrat', sans-serif" }}>
       
+      {/* ── GLOBAL THEME OVERRIDES FOR BOOTSTRAP BLUES ── */}
+      <style>{`
+        /* 1. Primary Buttons (e.g., "Add Service", "View", etc.) */
+        .btn-primary {
+          background-color: #C5A059 !important;
+          border-color: #C5A059 !important;
+          color: #1A1A1B !important;
+        }
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+          background-color: #D4AF6A !important;
+          border-color: #D4AF6A !important;
+          color: #1A1A1B !important;
+          box-shadow: 0 0 0 0.25rem rgba(197, 160, 89, 0.25) !important;
+        }
+        
+        /* 2. Outline Buttons (e.g., "1M, 6M, 1Y" filters) */
+        .btn-outline-primary {
+          color: #C5A059 !important;
+          border-color: #C5A059 !important;
+        }
+        .btn-outline-primary:hover, .btn-outline-primary.active, .btn-check:checked + .btn-outline-primary {
+          background-color: #C5A059 !important;
+          color: #1A1A1B !important;
+          border-color: #C5A059 !important;
+        }
+
+        /* 3. Badges (e.g., "New", "Confirmed", "Portrait", "Wedding") */
+        .badge.bg-primary, .bg-primary {
+          background-color: rgba(197, 160, 89, 0.15) !important;
+          color: #C5A059 !important;
+          border: 1px solid rgba(197, 160, 89, 0.4) !important;
+        }
+        .badge.bg-info, .bg-info {
+          background-color: rgba(197, 160, 89, 0.15) !important;
+          color: #C5A059 !important;
+          border: 1px solid rgba(197, 160, 89, 0.4) !important;
+        }
+      `}</style>
+
       {/* SIDEBAR */}
       <div className="d-none d-lg-block sticky-top" style={{ width: '280px', height: '100vh', overflowY: 'auto', backgroundColor: '#242426', borderRight: '1px solid rgba(197, 160, 89, 0.2)' }}>
         <div className="p-4 mb-2">
@@ -188,10 +226,11 @@ const Dashboard = ({ user, onLogout }) => {
 
           <SidebarItem icon={ShoppingCart} label="Orders" active={currentView === 'Orders'} hasSubmenu isOpen={openMenus.orders} onClick={() => toggleMenu('orders')}>
             <div className="ms-4 ps-3 py-1" style={{ borderLeft: '1px solid rgba(197, 160, 89, 0.2)' }}>
-              <div className="p-2 small cursor-pointer rounded" style={{ color: orderFilter === 'New' && currentView === 'Orders' ? '#C5A059' : '#A0A0A0' }} onClick={() => handleNavClick('Orders', 'New')}>New Orders</div>
-              <div className="p-2 small cursor-pointer rounded" style={{ color: orderFilter === 'Confirmed' && currentView === 'Orders' ? '#C5A059' : '#A0A0A0' }} onClick={() => handleNavClick('Orders', 'Confirmed')}>Confirmed Orders</div>
-              <div className="p-2 small cursor-pointer rounded" style={{ color: orderFilter === 'Completed' && currentView === 'Orders' ? '#C5A059' : '#A0A0A0' }} onClick={() => handleNavClick('Orders', 'Completed')}>Completed Orders</div>
-              <div className="p-2 small cursor-pointer rounded" style={{ color: orderFilter === 'Cancelled' && currentView === 'Orders' ? '#C5A059' : '#A0A0A0' }} onClick={() => handleNavClick('Orders', 'Cancelled')}>Cancelled Orders</div>
+              {/* FIX: Explicit cursor: pointer to fix I-beam hover issue */}
+              <div className="p-2 small rounded" style={{ cursor: 'pointer', color: orderFilter === 'New' && currentView === 'Orders' ? '#C5A059' : '#A0A0A0' }} onClick={() => handleNavClick('Orders', 'New')}>New Orders</div>
+              <div className="p-2 small rounded" style={{ cursor: 'pointer', color: orderFilter === 'Confirmed' && currentView === 'Orders' ? '#C5A059' : '#A0A0A0' }} onClick={() => handleNavClick('Orders', 'Confirmed')}>Confirmed Orders</div>
+              <div className="p-2 small rounded" style={{ cursor: 'pointer', color: orderFilter === 'Completed' && currentView === 'Orders' ? '#C5A059' : '#A0A0A0' }} onClick={() => handleNavClick('Orders', 'Completed')}>Completed Orders</div>
+              <div className="p-2 small rounded" style={{ cursor: 'pointer', color: orderFilter === 'Cancelled' && currentView === 'Orders' ? '#C5A059' : '#A0A0A0' }} onClick={() => handleNavClick('Orders', 'Cancelled')}>Cancelled Orders</div>
             </div>
           </SidebarItem>
 

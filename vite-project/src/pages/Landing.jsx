@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import '../styles/landing.css';
+import BookingWizard from '../components/BookingWizard';
 
 /* ===== TEAM DATA (3 members per spec) ===== */
 const teamData = [
@@ -49,13 +50,17 @@ const createRipple = (e) => {
   button.appendChild(circle);
 };
 
-const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }) => {
+const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick, onProfileClick }) => {
   /* ─── STATE ─── */
   const [formData, setFormData] = useState({ cName: '', cEmail: '', cMessage: '' });
   const [storyOpen, setStoryOpen] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [newsletterDone, setNewsletterDone] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
+  
+  /* ─── BOOKING WIZARD STATE ─── */
+  const [wizardOpen, setWizardOpen] = useState(false);
+  const [preSelectedPkg, setPreSelectedPkg] = useState('prestige');
 
   /* ─── REFS for scroll reveal ─── */
   const revealRefs = useRef([]);
@@ -125,6 +130,33 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
     setNewsletterDone(true);
   };
 
+  const handleServiceClick = (serviceName) => {
+    setFormData(prev => ({
+      ...prev,
+      cMessage: `Hi E-Imagination team,\n\nI am interested in booking a ${serviceName} session. Could you provide more details regarding packages and availability?`
+    }));
+
+    const contactSection = document.querySelector('#contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => {
+        const msgInput = document.getElementById('contact-message');
+        if (msgInput) msgInput.focus();
+      }, 600);
+    }
+  };
+
+  const handleBookPackage = (pkgId) => {
+    if (!user) {
+      // Prompt login if not logged in
+      onLoginClick();
+    } else {
+      // Open wizard if logged in
+      setPreSelectedPkg(pkgId);
+      setWizardOpen(true);
+    }
+  };
+
   return (
     <div className="landing-root">
 
@@ -134,11 +166,11 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
         onLoginClick={onLoginClick}
         onDashboardClick={onDashboardClick}
         onLogout={onLogout}
+        onProfileClick={onProfileClick}
       />
 
       {/* ── HERO SECTION ──────────────────────────────────────────── */}
       <section id="home" className="lp-hero">
-        {/* Background */}
         <div className="lp-hero__bg">
           <img
             src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1920&q=85"
@@ -147,7 +179,6 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
           />
         </div>
 
-        {/* Content */}
         <div className="lp-hero__content">
           <p className="lp-hero__subtitle">Photography Studio</p>
 
@@ -167,7 +198,7 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
               className="lp-btn-gold"
               onClick={(e) => {
                 createRipple(e);
-                const el = document.querySelector('#contact');
+                const el = document.querySelector('#pricing');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
               }}
             >
@@ -187,7 +218,6 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
           </div>
         </div>
 
-        {/* Marquee */}
         <div className="lp-marquee">
           <div className="lp-marquee__track">
             {[...marqueeItems, ...marqueeItems].map((item, i) => (
@@ -200,7 +230,6 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
       {/* ── ABOUT SECTION ("Who We Are") ──────────────────────────── */}
       <section id="about" className="lp-section lp-section--alt">
         <div className="lp-about" ref={addRevealRef}>
-          {/* Left — Image */}
           <div className="lp-about__image-wrapper lp-reveal" ref={addRevealRef}>
             <img
               className="lp-about__image"
@@ -210,7 +239,6 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
             />
           </div>
 
-          {/* Right — Text */}
           <div className="lp-about__text lp-reveal" ref={addRevealRef}>
             <span className="lp-section__label">Who We Are</span>
             <h2 className="lp-section__title">
@@ -224,7 +252,6 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
               we deliver memories that last a lifetime.
             </p>
 
-            {/* Stats */}
             <div className="lp-about__stats">
               <div>
                 <div className="lp-about__stat-number">150+</div>
@@ -352,8 +379,51 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
         </div>
       </section>
 
+      {/* ── PRICING & BOOKING WIZARD TRIGGER ──────────────────────────── */}
+      {/* ── PRICING & BOOKING WIZARD TRIGGER ──────────────────────────── */}
+      <section id="pricing" className="lp-section lp-section--alt">
+        <div className="lp-team">
+          <div className="lp-reveal" ref={addRevealRef} style={{ marginBottom: '3rem' }}>
+            <span className="lp-section__label" style={{ justifyContent: 'center' }}>Services</span>
+            <h2 className="lp-section__title" style={{ textAlign: 'center' }}>Choose Your Experience</h2>
+            {/* FIX: Removed text-muted, added inline color */}
+            <p className="text-center mx-auto" style={{ maxWidth: '600px', color: '#A0A0A0' }}>Log in to secure your date directly through our portal.</p>
+          </div>
+
+          <div className="lp-team__grid text-start">
+            {/* Package 1 */}
+            <div className="lp-team__card lp-reveal p-4 d-flex flex-column" ref={addRevealRef} style={{ background: '#1A1A1B', border: '1px solid rgba(197, 160, 89, 0.3)', cursor: 'default' }}>
+               <h4 style={{ fontFamily: "'Playfair Display', serif", color: '#F5F5F7' }}>The Essential</h4>
+               <h2 style={{ color: '#C5A059', margin: '1rem 0' }}>$1,500</h2>
+               {/* FIX: Removed text-muted, added inline color */}
+               <p className="small flex-grow-1 mb-4" style={{ color: '#A0A0A0', lineHeight: '1.6' }}>Perfect for intimate portraits and small events.</p>
+               <button className="lp-btn-ghost w-100" onClick={(e) => { createRipple(e); handleBookPackage('essential'); }}>Book Session</button>
+            </div>
+            
+            {/* Package 2 */}
+            <div className="lp-team__card lp-reveal p-4 d-flex flex-column" ref={addRevealRef} style={{ background: '#242426', border: '1px solid #C5A059', cursor: 'default' }}>
+               <div className="text-center mb-3"><span style={{ backgroundColor: 'rgba(197, 160, 89, 0.2)', color: '#C5A059', letterSpacing: '1px', padding: '4px 12px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold' }}>MOST POPULAR</span></div>
+               <h4 style={{ fontFamily: "'Playfair Display', serif", color: '#F5F5F7' }}>The Prestige</h4>
+               <h2 style={{ color: '#C5A059', margin: '1rem 0' }}>$3,500</h2>
+               {/* FIX: Removed text-muted, added inline color */}
+               <p className="small flex-grow-1 mb-4" style={{ color: '#A0A0A0', lineHeight: '1.6' }}>Our most popular choice for weddings and large events.</p>
+               <button className="lp-btn-gold w-100" onClick={(e) => { createRipple(e); handleBookPackage('prestige'); }}>Book Session</button>
+            </div>
+
+            {/* Package 3 */}
+            <div className="lp-team__card lp-reveal p-4 d-flex flex-column" ref={addRevealRef} style={{ background: '#1A1A1B', border: '1px solid rgba(197, 160, 89, 0.3)', cursor: 'default' }}>
+               <h4 style={{ fontFamily: "'Playfair Display', serif", color: '#F5F5F7' }}>The Couture</h4>
+               <h2 style={{ color: '#C5A059', margin: '1rem 0' }}>$6,000</h2>
+               {/* FIX: Removed text-muted, added inline color */}
+               <p className="small flex-grow-1 mb-4" style={{ color: '#A0A0A0', lineHeight: '1.6' }}>The ultimate luxury experience for high-end productions.</p>
+               <button className="lp-btn-ghost w-100" onClick={(e) => { createRipple(e); handleBookPackage('couture'); }}>Book Session</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── CONTACT SECTION ───────────────────────────────────────── */}
-      <section id="contact" className="lp-section lp-section--alt">
+      <section id="contact" className="lp-section">
         <div className="lp-contact">
           <div className="lp-reveal" ref={addRevealRef} style={{ marginBottom: '3rem' }}>
             <span className="lp-section__label">Get In Touch</span>
@@ -363,7 +433,6 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
           <div className="lp-contact__grid">
             {/* Left — Contact info */}
             <div className="lp-contact__info lp-reveal" ref={addRevealRef}>
-              {/* Email */}
               <div className="lp-contact__info-item">
                 <div className="lp-contact__info-icon">
                   <Mail size={20} />
@@ -379,7 +448,6 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
                 </div>
               </div>
 
-              {/* Location */}
               <div className="lp-contact__info-item">
                 <div className="lp-contact__info-icon">
                   <MapPin size={20} />
@@ -409,7 +477,6 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
               ref={addRevealRef}
               onSubmit={handleContactSubmit}
             >
-              {/* Name */}
               <div className="lp-floating-group">
                 <input
                   type="text"
@@ -423,7 +490,6 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
                 <label htmlFor="contact-name">Name</label>
               </div>
 
-              {/* Email */}
               <div className="lp-floating-group">
                 <input
                   type="email"
@@ -437,7 +503,6 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
                 <label htmlFor="contact-email">Email</label>
               </div>
 
-              {/* Message */}
               <div className="lp-floating-group">
                 <textarea
                   name="cMessage"
@@ -476,7 +541,6 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
       {/* ── FOOTER ────────────────────────────────────────────────── */}
       <footer className="lp-footer">
         <div className="lp-footer__grid">
-          {/* Col 1 — Brand */}
           <div>
             <div className="lp-footer__brand">E-Imagination</div>
             <p className="lp-footer__brand-text">
@@ -514,18 +578,34 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
             </div>
           </div>
 
-          {/* Col 2 — Services */}
           <div>
-            <h4 className="lp-footer__heading">Services</h4>
+            <h4 className="lp-footer__heading">Query For</h4>
             <ul className="lp-footer__links">
-              <li><span className="lp-footer__link">Wedding Photography</span></li>
-              <li><span className="lp-footer__link">Event Photography</span></li>
-              <li><span className="lp-footer__link">Fashion Photography</span></li>
-              <li><span className="lp-footer__link">Portrait Photography</span></li>
+              {[
+                'Wedding Photography', 
+                'Event Photography', 
+                'Fashion Photography', 
+                'Portrait Photography'
+              ].map((service) => (
+                <li key={service}>
+                  <button 
+                    className="lp-footer__link" 
+                    style={{ 
+                      background: 'none', 
+                      border: 'none', 
+                      padding: 0, 
+                      cursor: 'pointer',
+                      textAlign: 'left'
+                    }}
+                    onClick={() => handleServiceClick(service)}
+                  >
+                    {service}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Col 3 — Quick Links */}
           <div>
             <h4 className="lp-footer__heading">Quick Links</h4>
             <ul className="lp-footer__links">
@@ -533,6 +613,7 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
                 ['Home', '#home'],
                 ['About', '#about'],
                 ['Portfolio', '#portfolio'],
+                ['Pricing', '#pricing'],
                 ['Contact', '#contact'],
               ].map(([label, href]) => (
                 <li key={label}>
@@ -542,7 +623,6 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
             </ul>
           </div>
 
-          {/* Col 4 — Newsletter */}
           <div>
             <h4 className="lp-footer__heading">Newsletter</h4>
             <p className="lp-footer__newsletter-text">
@@ -580,13 +660,19 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick }
           </div>
         </div>
 
-        {/* Copyright */}
         <div className="lp-footer__bottom">
           <p className="lp-footer__copyright">
             © 2026 Studio Inc. All Rights Reserved.
           </p>
         </div>
       </footer>
+
+      {/* Render the Wizard */}
+      <BookingWizard 
+        show={wizardOpen} 
+        onHide={() => setWizardOpen(false)} 
+        initialPackage={preSelectedPkg} 
+      />
 
     </div>
   );
@@ -598,6 +684,7 @@ Landing.propTypes = {
   onDashboardClick: PropTypes.func,
   onLogout: PropTypes.func.isRequired,
   onShopClick: PropTypes.func,
+  onProfileClick: PropTypes.func,
 };
 
 export default Landing;

@@ -2,20 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { LayoutDashboard, User, LogOut } from 'lucide-react';
 
-const Navbar = ({ user, onLoginClick, onDashboardClick, onLogout }) => {
+const Navbar = ({ user, onLoginClick, onDashboardClick, onLogout, onProfileClick, onHomeClick }) => {
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Scroll listener for glassmorphism transition
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -39,17 +37,22 @@ const Navbar = ({ user, onLoginClick, onDashboardClick, onLogout }) => {
     return name.charAt(0).toUpperCase();
   };
 
+  // FIX: Differentiates between scrolling and changing views
   const handleNavClick = (e, href) => {
     e.preventDefault();
     setMobileOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    
+    if (onHomeClick) {
+      onHomeClick(); // If on Profile, jump back to Home view
+    } else {
+      const el = document.querySelector(href);
+      if (el) el.scrollIntoView({ behavior: 'smooth' }); // If on Landing, just scroll
+    }
   };
 
   return (
     <>
       <nav className={`lp-navbar${scrolled ? ' scrolled' : ''}`} id="lp-navbar">
-        {/* Brand */}
         <a
           href="#home"
           className="lp-navbar__brand"
@@ -58,7 +61,6 @@ const Navbar = ({ user, onLoginClick, onDashboardClick, onLogout }) => {
           E-Imagination
         </a>
 
-        {/* Desktop nav links */}
         <ul className="lp-navbar__links">
           {navLinks.map(({ label, href }) => (
             <li key={label}>
@@ -73,7 +75,6 @@ const Navbar = ({ user, onLoginClick, onDashboardClick, onLogout }) => {
           ))}
         </ul>
 
-        {/* Auth section */}
         <div className="lp-navbar__auth" style={{ display: 'flex', alignItems: 'center' }}>
           {user ? (
             <div className="lp-navbar__avatar-wrapper" ref={dropdownRef}>
@@ -81,7 +82,6 @@ const Navbar = ({ user, onLoginClick, onDashboardClick, onLogout }) => {
                 className="lp-navbar__avatar"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 role="button"
-                aria-label="User menu"
                 tabIndex={0}
               >
                 {getUserInitials()}
@@ -97,7 +97,7 @@ const Navbar = ({ user, onLoginClick, onDashboardClick, onLogout }) => {
                 </button>
                 <button
                   className="lp-navbar__dropdown-item"
-                  onClick={() => setDropdownOpen(false)}
+                  onClick={() => { setDropdownOpen(false); onProfileClick && onProfileClick(); }}
                 >
                   <User size={16} />
                   Profile
@@ -121,11 +121,9 @@ const Navbar = ({ user, onLoginClick, onDashboardClick, onLogout }) => {
           )}
         </div>
 
-        {/* Mobile hamburger */}
         <button
           className="lp-navbar__hamburger"
           onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
         >
           <span />
           <span />
@@ -133,7 +131,6 @@ const Navbar = ({ user, onLoginClick, onDashboardClick, onLogout }) => {
         </button>
       </nav>
 
-      {/* Mobile menu */}
       <div className={`lp-navbar__mobile-menu${mobileOpen ? ' open' : ''}`}>
         {navLinks.map(({ label, href }) => (
           <a
@@ -153,6 +150,13 @@ const Navbar = ({ user, onLoginClick, onDashboardClick, onLogout }) => {
             >
               <LayoutDashboard size={16} />
               Dashboard
+            </button>
+            <button
+              className="lp-navbar__dropdown-item"
+              onClick={() => { setMobileOpen(false); onProfileClick && onProfileClick(); }}
+            >
+              <User size={16} />
+              Profile
             </button>
             <button
               className="lp-navbar__dropdown-item logout"
@@ -181,6 +185,8 @@ Navbar.propTypes = {
   onLoginClick: PropTypes.func.isRequired,
   onDashboardClick: PropTypes.func,
   onLogout: PropTypes.func,
+  onProfileClick: PropTypes.func,
+  onHomeClick: PropTypes.func,
 };
 
 export default Navbar;

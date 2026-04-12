@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import FormInput from '../components/FormInput';
+import { Camera } from 'lucide-react';
 
 const Login = ({ onBack, onRegisterClick, onLoginSuccess, onForgotPassword }) => {
   const [role, setRole] = useState('user');
@@ -23,20 +24,20 @@ const Login = ({ onBack, onRegisterClick, onLoginSuccess, onForgotPassword }) =>
               
               {/* Artistic Header */}
               <div className="text-center mb-4">
-                <div className="camera-icon mb-2">📸</div>
-                <h2 className="fw-light tracking-widest text-uppercase mb-1">Capture</h2>
-                <p className="text-muted small italic">Sign in to your gallery</p>
+                <div className="camera-icon mb-2"><Camera color="#C5A059" size={36} /></div>
+                <h2 className="capture-header mb-1">CAPTURE</h2>
+                <p className="subtext-header">Sign in to your gallery</p>
               </div>
 
               {/* Minimalist Switcher */}
               <div className="role-pill-container mb-4">
-                <div className="d-flex bg-dark-soft rounded-pill p-1">
+                <div className="d-flex toggle-container">
                   <button 
-                    className={`flex-fill btn btn-sm rounded-pill py-2 transition ${role === 'user' ? 'bg-white shadow text-dark' : 'text-white-50'}`}
+                    className={`flex-fill btn btn-sm rounded-pill py-2 toggle-pill ${role === 'user' ? 'active' : ''}`}
                     onClick={() => setRole('user')}
                   >Client</button>
                   <button 
-                    className={`flex-fill btn btn-sm rounded-pill py-2 transition ${role === 'admin' ? 'bg-white shadow text-dark' : 'text-white-50'}`}
+                    className={`flex-fill btn btn-sm rounded-pill py-2 toggle-pill ${role === 'admin' ? 'active' : ''}`}
                     onClick={() => setRole('admin')}
                   >Admin</button>
                 </div>
@@ -60,7 +61,7 @@ const Login = ({ onBack, onRegisterClick, onLoginSuccess, onForgotPassword }) =>
                     <button 
                       type="button" 
                       onClick={onForgotPassword} 
-                      className="btn btn-link p-0 small text-decoration-none text-primary"
+                      className="btn btn-link p-0 small text-decoration-none color-gold"
                       style={{ fontSize: '0.75rem' }}
                     >
                       Forgot Password?
@@ -75,19 +76,19 @@ const Login = ({ onBack, onRegisterClick, onLoginSuccess, onForgotPassword }) =>
                   />
                 </div>
 
-                <button type="submit" className="btn btn-dark w-100 py-2 fw-bold mb-3 login-btn">
+                <button type="submit" className="login-btn w-100 py-2 mb-3">
                   Enter Studio
                 </button>
               </form>
               
               <div className="text-center mt-3">
-                <p className="small text-muted">
+                <p className="small text-a0a0a0">
                   New here? 
                   <button onClick={onRegisterClick} className="btn btn-link p-0 ms-1 small fw-bold text-decoration-none color-gold">
                     Create Portfolio
                   </button>
                 </p>
-                <button onClick={onBack} className="btn btn-link btn-sm text-decoration-none text-muted opacity-50">
+                <button onClick={onBack} className="btn btn-link btn-sm text-decoration-none text-a0a0a0 opacity-50">
                   ← Back
                 </button>
               </div>
@@ -98,7 +99,7 @@ const Login = ({ onBack, onRegisterClick, onLoginSuccess, onForgotPassword }) =>
 
       <style>{`
         .auth-wrapper {
-          background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+          background: linear-gradient(rgba(26, 26, 27, 0.65), rgba(26, 26, 27, 0.65)), 
                       url('https://images.unsplash.com/photo-1493863641943-9b68992a8d07?auto=format&fit=crop&q=80&w=2058');
           background-size: cover;
           background-position: center;
@@ -107,52 +108,104 @@ const Login = ({ onBack, onRegisterClick, onLoginSuccess, onForgotPassword }) =>
         }
 
         .glass-card {
-          background: rgba(255, 255, 255, 0.85);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border-radius: 20px;
-          border: 1px solid rgba(255, 255, 255, 0.3);
+          background: rgba(36, 36, 38, 0.65);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border-radius: 24px;
+          border: 1px solid rgba(197, 160, 89, 0.25);
+          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
         }
 
         .camera-icon {
-          font-size: 2rem;
-          filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
 
-        .bg-dark-soft {
-          background: rgba(0, 0, 0, 0.08);
+        .capture-header {
+          font-family: 'Playfair Display', serif;
+          color: #F5F5F7;
+          letter-spacing: 4px;
+          text-transform: uppercase;
         }
 
-        .tracking-widest {
-          letter-spacing: 0.2rem;
+        .subtext-header {
+          font-family: 'Montserrat', sans-serif;
+          color: #A0A0A0;
+          font-size: 0.875rem;
+          margin-bottom: 0;
+        }
+
+        .toggle-container {
+          background: rgba(0, 0, 0, 0.4);
+          border-radius: 99px;
+          padding: 4px;
+        }
+
+        .toggle-pill {
+          font-weight: 500;
+          background: transparent;
+          color: #A0A0A0;
+          border: 1px solid transparent;
+          transition: all 0.3s ease;
+        }
+
+        .toggle-pill.active {
+          background: rgba(197, 160, 89, 0.15);
+          color: #C5A059;
+          border: 1px solid rgba(197, 160, 89, 0.4);
+          box-shadow: none;
         }
 
         .login-btn {
-          background: #1a1a1a;
+          background: #C5A059;
+          color: #1A1A1B;
           border: none;
-          border-radius: 8px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          border-radius: 9999px;
           transition: all 0.3s ease;
         }
 
         .login-btn:hover {
-          background: #333;
           transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+          box-shadow: 0 8px 25px rgba(197, 160, 89, 0.3);
+          color: #1A1A1B;
         }
 
         .color-gold {
-          color: #b08d57 !important;
+          color: #C5A059 !important;
         }
-
-        .transition {
-          transition: all 0.3s ease;
+        
+        .text-a0a0a0 {
+          color: #A0A0A0 !important;
+          transition: color 0.3s ease;
         }
 
         /* Ensuring FormInput looks professional */
-        .form-control {
+        .form-control, .form-control:not(:focus) {
+          background: rgba(0, 0, 0, 0.3) !important;
+          border: 1px solid rgba(255, 255, 255, 0.1) !important;
+          color: #F5F5F7 !important;
           border-radius: 8px;
-          padding: 0.6rem 1rem;
-          border: 1px solid #ddd;
+        }
+
+        .form-control:focus {
+          background: rgba(0, 0, 0, 0.3) !important;
+          color: #F5F5F7 !important;
+          border-color: #C5A059 !important;
+          box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.15) !important;
+          outline: none !important;
+        }
+
+        .form-control::placeholder {
+          color: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        .form-label {
+          font-size: 0.875rem !important;
+          font-weight: bold !important;
+          color: #A0A0A0 !important;
         }
       `}</style>
     </div>

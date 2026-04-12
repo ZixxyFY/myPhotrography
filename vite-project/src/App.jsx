@@ -5,6 +5,8 @@ import Registration from './pages/Registration';
 import EquipmentRental from './pages/user/EquipmentRental';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserDashboard from './pages/user/UserDashboard';
+import Profile from './pages/user/Profile';
+import Navbar from './components/Navbar';
 import './styles/App.css';
 import './styles/theme.css';
 
@@ -19,8 +21,8 @@ const App = () => {
   const navigateToRegister = () => setCurrentView('registration');
   const navigateToHome = () => setCurrentView('landing');
   const navigateToRental = () => setCurrentView('rental');
+  const navigateToProfile = () => setCurrentView('profile');
   
-  // NEW: Helper to open the correct dashboard based on who is logged in
   const navigateToDashboard = () => {
     if (role === 'admin') {
       setCurrentView('admin-dashboard');
@@ -34,13 +36,9 @@ const App = () => {
     setUser(username);
     setRole(userRole);
     
-    // REDIRECT LOGIC UPDATED:
     if (userRole === 'admin') {
-      // Admins usually want to go straight to work
       setCurrentView('admin-dashboard');
     } else {
-      // Users stay on Landing Page (Home) to browse, 
-      // but they are now logged in.
       setCurrentView('landing'); 
     }
   };
@@ -60,8 +58,8 @@ const App = () => {
           onLoginClick={navigateToLogin} 
           onShopClick={navigateToRental}
           onLogout={handleLogout}
-          // PASS THE DASHBOARD NAVIGATION FUNCTION
           onDashboardClick={navigateToDashboard} 
+          onProfileClick={navigateToProfile}
         />
       )}
 
@@ -100,7 +98,23 @@ const App = () => {
           <UserDashboard 
             user={user} 
             onLogout={handleLogout} 
+            onHomeClick={navigateToHome} /* FIX: Passed Home Click */
           />
+      )}
+
+      {/* PROFILE PAGE */}
+      {currentView === 'profile' && user && (
+        <div style={{ backgroundColor: '#1A1A1B', minHeight: '100vh', paddingTop: '100px', paddingBottom: '50px' }}>
+          <Navbar 
+            user={user}
+            onLoginClick={navigateToLogin}
+            onDashboardClick={navigateToDashboard}
+            onLogout={handleLogout}
+            onProfileClick={navigateToProfile}
+            onHomeClick={navigateToHome} /* FIX: Passed Home Click to separate Navbar */
+          />
+          <Profile user={user} />
+        </div>
       )}
     </div>
   );
