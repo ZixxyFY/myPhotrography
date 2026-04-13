@@ -20,6 +20,8 @@ const Profile = ({ user }) => {
         if (parsed.email) defaultProfile.email = parsed.email;
       }
     } catch(e) {
+      console.error(e);
+      
        // Ignore non-json or missing
     }
     return defaultProfile;
