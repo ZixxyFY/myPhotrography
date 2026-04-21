@@ -115,6 +115,8 @@ const UserDashboard = ({ user: initialUser, onLogout, onHomeClick }) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [projects, setProjects] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
+  const [isActuallyEditing, setIsActuallyEditing] = useState(false);
   const formattedProjects = projects.map((p) => ({
     contracts: [
       {
@@ -162,45 +164,77 @@ const UserDashboard = ({ user: initialUser, onLogout, onHomeClick }) => {
     }
   }, []);
 
- const addProject = async (formData) => {
-  try {
-    const response = await createProject({
-      title: formData.title,
-      type: formData.type,
-      date: formData.date,
-      comment: formData.comment,
-      client: currentUser.name || "Client",
-      shotList: []
-    });
-    
-    if (response.status === 201 || response.status === 200) {
-      await fetchProjects(); // Refresh the list from DB
-      setShowForm(false);    // Close the modal
-    }
-  } catch (err) {
-    console.error("Error saving to database:", err);
-    alert("Database connection error. Is your backend server running?");
+ const handleOpenEdit = (proj) => {
+  setEditingProject(proj);
+  setShowForm(true);
+};
+
+const addShot = async (id) => {
+  const shotName = window.prompt("Enter the name for this new shot:"); // Ask for shot name
+  if (!shotName) return; 
+
+  const project = projects.find(p => p._id === id);
+  await updateProject(id, {
+    shotList: [...(project.shotList || []), shotName]
+  });
+  fetchProjects();
+};
+
+const handleFormSubmit = async (e) => {
+  e.preventDefault();
+  const data = new FormData(e.target);
+  const projectData = {
+    title: data.get('title'),
+    type: data.get('type'),
+    date: data.get('date'),
+    comment: data.get('comment'),
+    client: currentUser.name,
+  };
+
+  if (editingProject) {
+    await updateProject(editingProject._id, projectData);
+  } else {
+    await createProject({ ...projectData, shotList: [] });
   }
+setIsActuallyEditing(false); // Add this line
+  setShowForm(false);
+  setEditingProject(null);
+  setShowForm(false);
+  fetchProjects();
 };
   const confirmLogout = () => {
     localStorage.removeItem('user');
     if (onLogout) onLogout();
     window.location.href = '/';
   };
-  const addShot = async (id) => {
-    const project = projects.find(p => p._id === id);
+  const editShot = async (projectId, shotIndex, currentShotName) => {
+  const newShotName = window.prompt("Edit shot name:", currentShotName);
+  if (!newShotName || newShotName === currentShotName) return;
 
-    await updateProject(id, {
-  shotList: [...(project.shotList || []), "New Shot"]
-});
+  const project = projects.find(p => p._id === projectId);
+  const updatedShotList = [...project.shotList];
+  updatedShotList[shotIndex] = newShotName; // Update specific index
 
-    fetchProjects();
-  };
-  const removeProject = async (id) => {
+  await updateProject(projectId, { shotList: updatedShotList });
+  fetchProjects();
+};
+
+const deleteShot = async (projectId, shotIndex) => {
+  if (!window.confirm("Delete this shot?")) return;
+
+  const project = projects.find(p => p._id === projectId);
+  const updatedShotList = project.shotList.filter((_, index) => index !== shotIndex); // Remove by index
+
+  await updateProject(projectId, { shotList: updatedShotList });
+  fetchProjects();
+};
+ 
+const removeProject = async (id) => {
+  if (window.confirm("Are you sure you want to delete this project?")) {
     await deleteProject(id);
     fetchProjects();
-  };
-
+  }
+};
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Overview' },
     { id: 'projects', icon: FolderOpen, label: 'My Projects' },
@@ -211,12 +245,11 @@ const UserDashboard = ({ user: initialUser, onLogout, onHomeClick }) => {
   // --- INTERNAL ROUTER ---
   const renderContent = () => {
     switch (activeTab) {
-     case 'projects':
+    case 'projects':
   return (
     <div className="fade-in animate-fade-in">
       <h2 className="fw-bold text-white mb-4" style={styles.fontHeader}>Projects & Planning</h2>
       <div className="row g-4">
-        {/* Left Column: Projects/Contracts */}
         <div className="col-md-6">
           <div className={glassClass} style={styles.glass}>
             <h5 className="text-white mb-4 fw-bold" style={styles.fontHeader}>
@@ -225,7 +258,8 @@ const UserDashboard = ({ user: initialUser, onLogout, onHomeClick }) => {
             {projects.map((proj) => (
               <div key={proj._id} className="p-3 rounded-3 mb-3 d-flex justify-content-between align-items-center"
                 style={{ backgroundColor: 'rgba(0,0,0,0.3)', border: '1px solid rgba(197,160,89,0.3)' }}>
-                <div>
+                {/* CLICK TO EDIT PART */}
+                <div onClick={() => handleOpenEdit(proj)} style={{ cursor: 'pointer' }}>
                   <h6 className="text-white mb-1">{proj.title}</h6>
                   <span style={{ color: styles.gold, fontSize: '0.75rem' }}>{proj.status || 'pending'}</span>
                 </div>
@@ -235,87 +269,127 @@ const UserDashboard = ({ user: initialUser, onLogout, onHomeClick }) => {
                 </div>
               </div>
             ))}
-            <button className="btn w-100 mt-3" style={{ border: `1px dashed ${styles.gold}`, color: styles.gold }} onClick={() => setShowForm(true)}>
-  + Create New Project
-</button>
+            <button className="btn w-100 mt-3" style={{ border: `1px dashed ${styles.gold}`, color: styles.gold }} onClick={() => { setEditingProject(null); setShowForm(true); }}>
+              + Create New Project
+            </button>
           </div>
         </div>
 
-        {/* Right Column: Shot List Details */}
-        <div className="col-md-6">
-          <div className={glassClass} style={styles.glass}>
-            <h5 className="text-white mb-4 fw-bold" style={styles.fontHeader}>
-              <CheckCircle className="me-2 mb-1" size={20} color={styles.gold} /> Shot List Builder
-            </h5>
-            {projects.map((proj) => (
-              <div key={proj._id} className="mb-4 p-3 rounded shadow-sm" style={{backgroundColor: 'rgba(255,255,255,0.02)'}}>
-                <h6 style={{color: styles.gold}}>{proj.title}</h6>
-                {(proj.shotList || []).map((shot, i) => (
-                  <div key={i} className="form-check text-white-50 small mb-1">
-                    <input className="form-check-input" type="checkbox" id={`shot-${proj._id}-${i}`} />
-                    <label className="form-check-label" htmlFor={`shot-${proj._id}-${i}`}>{shot}</label>
-                  </div>
-                ))}
-              </div>
-            ))}
+       {/* Right Column: Shot List Details */}
+<div className="col-md-6">
+  <div className={glassClass} style={styles.glass}>
+    <h5 className="text-white mb-4 fw-bold" style={styles.fontHeader}>
+      <CheckCircle className="me-2 mb-1" size={20} color={styles.gold} /> Shot List Builder
+    </h5>
+    {projects.map((proj) => (
+      <div key={proj._id} className="mb-4 p-3 rounded shadow-sm" style={{backgroundColor: 'rgba(255,255,255,0.02)'}}>
+        <h6 style={{color: styles.gold}} className="mb-3">{proj.title}</h6>
+        
+        {(proj.shotList || []).map((shot, i) => (
+          <div key={i} className="d-flex align-items-center justify-content-between mb-2 shot-item-row">
+            <div className="form-check text-white-50 small mb-0">
+              <input className="form-check-input" type="checkbox" id={`shot-${proj._id}-${i}`} />
+              <label className="form-check-label" htmlFor={`shot-${proj._id}-${i}`}>{shot}</label>
+            </div>
+            
+            {/* EDIT & DELETE BUTTONS FOR SHOT */}
+            <div className="d-flex gap-2">
+              <button 
+                onClick={() => editShot(proj._id, i, shot)}
+                className="btn btn-sm p-0 text-muted hover-white" 
+                style={{ fontSize: '0.7rem' }}
+              >
+                Edit
+              </button>
+              <button 
+                onClick={() => deleteShot(proj._id, i)}
+                className="btn btn-sm p-0 text-danger opacity-75" 
+                style={{ fontSize: '0.7rem' }}
+              >
+                Delete
+              </button>
+            </div>
           </div>
-        </div>
+        ))}
       </div>
-      {/* NEW PROJECT MODAL */}
-{showForm && (
+    ))}
+  </div>
+</div>
+      </div>
+
+      {/* MODAL - Updated to handle both Add and Edit */}
+      {showForm && (
   <div className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style={{ backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 9999 }}>
     <div className="p-4 rounded-4 shadow-lg" style={{ ...styles.glass, backgroundColor: '#1A1A1B', maxWidth: '500px', width: '95%' }}>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h4 className="fw-bold text-white mb-0" style={styles.fontHeader}>New Shoot Details</h4>
-        <button className="btn text-white" onClick={() => setShowForm(false)}>X</button>
-      </div>
       
-      <form onSubmit={async (e) => {
-        e.preventDefault();
-        const data = new FormData(e.target);
-        const newProj = {
-          title: data.get('title'),
-          type: data.get('type'),
-          date: data.get('date'),
-          comment: data.get('comment'),
-          client: currentUser.name, // or "Guest"
-          shotList: []
-        };
-        await createProject(newProj); // Calling your API
-        // addProject(projectData);
-        setShowForm(false);
-        fetchProjects(); // Refresh the list
-      }}>
-        <div className="mb-3">
-          <label className="text-white-50 small">Project Title</label>
-          <input name="title" required className="form-control bg-dark border-secondary text-white" placeholder="e.g. Smith Wedding" />
-        </div>
-        
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="text-white-50 small">Photography Type</label>
-            <select name="type" className="form-select bg-dark border-secondary text-white">
-              <option value="Wedding">Wedding</option>
-              <option value="Portrait">Portrait</option>
-              <option value="Product">Product</option>
-              <option value="Event">Event</option>
-            </select>
-          </div>
-          <div className="col-md-6 mb-3">
-            <label className="text-white-50 small">Shoot Date</label>
-            <input name="date" type="date" required className="form-control bg-dark border-secondary text-white" />
-          </div>
-        </div>
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h4 className="fw-bold text-white mb-0" style={styles.fontHeader}>
+          {editingProject ? (isActuallyEditing ? 'Edit Project Details' : 'Project Overview') : 'New Shoot Details'}
+        </h4>
+        <button className="btn text-white" onClick={() => { setShowForm(false); setEditingProject(null); setIsActuallyEditing(false); }}>X</button>
+      </div>
 
-        <div className="mb-4">
-          <label className="text-white-50 small">Special Comments / Notes</label>
-          <textarea name="comment" className="form-control bg-dark border-secondary text-white" rows="3" placeholder="Add any specific requirements..."></textarea>
+      {/* VIEW MODE: Shows all details with an Edit button */}
+      {editingProject && !isActuallyEditing ? (
+        <div className="text-white">
+          <div className="mb-3">
+            <label className="text-white-50 small d-block">Project Title</label>
+            <p className="fs-5 fw-bold">{editingProject.title}</p>
+          </div>
+          <div className="row">
+            <div className="col-6 mb-3">
+              <label className="text-white-50 small d-block">Photography Type</label>
+              <p>{editingProject.type}</p>
+            </div>
+            <div className="col-6 mb-3">
+              <label className="text-white-50 small d-block">Shoot Date</label>
+              <p>{new Date(editingProject.date).toLocaleDateString()}</p>
+            </div>
+          </div>
+          <div className="mb-4">
+            <label className="text-white-50 small d-block">Special Comments / Notes</label>
+            <p className="p-3 rounded" style={{backgroundColor: 'rgba(255,255,255,0.05)'}}>{editingProject.comment || "No notes added."}</p>
+          </div>
+          <button 
+            className="btn w-100 py-3 fw-bold" 
+            style={{ border: `1px solid ${styles.gold}`, color: styles.gold }}
+            onClick={() => setIsActuallyEditing(true)}
+          >
+            Edit Project Data
+          </button>
         </div>
-
-        <button type="submit" className="btn w-100 py-3 fw-bold" style={{ backgroundColor: styles.gold, color: '#1A1A1B', borderRadius: '50px' }}>
-          Save Project to Database
-        </button>
-      </form>
+      ) : (
+        /* EDIT/CREATE FORM MODE */
+        <form onSubmit={handleFormSubmit}>
+          <div className="mb-3">
+            <label className="text-white-50 small">Project Title</label>
+            <input name="title" required className="form-control bg-dark border-secondary text-white" defaultValue={editingProject?.title || ""} />
+          </div>
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <label className="text-white-50 small">Photography Type</label>
+              <select name="type" className="form-select bg-dark border-secondary text-white" defaultValue={editingProject?.type || "Wedding"}>
+                <option value="Wedding">Wedding</option>
+                <option value="Portrait">Portrait</option>
+                <option value="Product">Product</option>
+                <option value="Event">Event</option>
+              </select>
+            </div>
+            <div className="col-md-6 mb-3">
+              <label className="text-white-50 small">Shoot Date</label>
+              <input name="date" type="date" required className="form-control bg-dark border-secondary text-white" defaultValue={editingProject?.date ? editingProject.date.split('T')[0] : ""} />
+            </div>
+          </div>
+          <div className="mb-4">
+            <label className="text-white-50 small">Special Comments / Notes</label>
+            <textarea name="comment" className="form-control bg-dark border-secondary text-white" rows="3" defaultValue={editingProject?.comment || ""}></textarea>
+          </div>
+          <button type="submit" className="btn w-100 py-3 fw-bold" style={{ backgroundColor: styles.gold, color: '#1A1A1B', borderRadius: '50px' }}>
+            {editingProject ? 'Save Changes' : 'Save Project to Database'}
+          </button>
+        </form>
+      )}
     </div>
   </div>
 )}
@@ -583,9 +657,12 @@ const UserDashboard = ({ user: initialUser, onLogout, onHomeClick }) => {
           </div>
         )}
       </div>
-      <style>{`
-        .placeholder-light::placeholder { color: rgba(255, 255, 255, 0.5) !important; }
-        .cursor-pointer { cursor: pointer; }
+     <style>{`
+        .placeholder-light::placeholder { color: rgba(255, 255, 255, 0.4) !important; }
+        .hover-white:hover { color: white !important; transition: 0.2s; }
+        .shot-item-row { border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; margin-bottom: 5px; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
     </div>
   );
