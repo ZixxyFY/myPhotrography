@@ -8,11 +8,13 @@ const Contact = require('./models/Contact');
 
 const app = express();
 const PORT = 5000;
+const projectRoutes = require("./routes/projectRoutes");
+
 
 // Middleware
-app.use(cors());
+app.use(require("cors")());
 app.use(express.json());
-
+app.use("/api/projects", require("./routes/projectRoutes"));
 // Connect MongoDB
 mongoose.connect('mongodb+srv://Trinary_db_user:Nishu%4017@cluster0.wkyv5xf.mongodb.net/?appName=Cluster0')
   .then(() => console.log('MongoDB Connected Successfully'))
