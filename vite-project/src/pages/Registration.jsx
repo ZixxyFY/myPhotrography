@@ -62,7 +62,7 @@ class Registration extends Component {
               {/* Left Branding Section */}
               <div className="col-lg-6 d-none d-lg-block">
                 <div className="brand-panel text-white pe-4">
-                  <span className="brand-badge">E-Imagination</span>
+                  <span className="brand-badge">E-imagination</span>
                   <h1 className="brand-title mt-2 mb-1">
                     Capture Moments. <br />
                     Create Memories.
@@ -186,7 +186,7 @@ class Registration extends Component {
 
                 {/* Mobile Branding */}
                 <div className="mobile-branding text-center mt-3 d-lg-none" style={{color: '#F5F5F7'}}>
-                  <h4 className="mb-1" style={{fontFamily: "'Playfair Display', serif"}}>E-Imagination</h4>
+                  <h4 className="mb-1" style={{fontFamily: "'Playfair Display', serif"}}>E-imagination</h4>
                   <p className="small mb-0" style={{color: '#A0A0A0'}}>Capture your memories beautifully.</p>
                 </div>
               </div>

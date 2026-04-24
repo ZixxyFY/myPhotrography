@@ -25,7 +25,7 @@ const Login = ({ onBack, onRegisterClick, onLoginSuccess, onForgotPassword }) =>
               {/* Artistic Header */}
               <div className="text-center mb-4">
                 <div className="camera-icon mb-2"><Camera color="#C5A059" size={36} /></div>
-                <h2 className="capture-header mb-1">CAPTURE</h2>
+                <h2 className="capture-header mb-1">E-imagination</h2>
                 <p className="subtext-header">Sign in to your gallery</p>
               </div>
 

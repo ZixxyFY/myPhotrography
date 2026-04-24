@@ -2,102 +2,83 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const User = require('./models/User');
 const Contact = require('./models/Contact');
+const projectRoutes = require('./routes/projectRoutes');
 
 const app = express();
 const PORT = 5000;
-const projectRoutes = require("./routes/projectRoutes");
 
-
-// Middleware
-app.use(require("cors")());
+// ─── Middleware ───────────────────────────────────────────────
+app.use(cors());
 app.use(express.json());
-app.use("/api/projects", require("./routes/projectRoutes"));
-// Connect MongoDB
+
+// ─── Routes ──────────────────────────────────────────────────
+app.use('/api/projects', projectRoutes);
+
+// ─── Connect MongoDB ─────────────────────────────────────────
 mongoose.connect('mongodb+srv://Trinary_db_user:Nishu%4017@cluster0.wkyv5xf.mongodb.net/?appName=Cluster0')
   .then(() => console.log('MongoDB Connected Successfully'))
   .catch((err) => console.log('MongoDB Error:', err));
 
-// Test route
+// ─── Health Check ────────────────────────────────────────────
 app.get('/', (req, res) => {
   res.send('Backend server is running');
 });
-// 👉 ADD HERE 👇 (Forgot Password API)
-app.post("/api/forgot-password", async (req, res) => {
-  // code hereconst crypto = require("crypto");
-const nodemailer = require("nodemailer");
-const User = require("./models/User");
 
-app.post("/api/forgot-password", async (req, res) => {
-  const { email } = req.body;
+// ─── Forgot Password ─────────────────────────────────────────
+app.post('/api/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
 
-  const user = await User.findOne({ email });
-
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
-  }
-
-  // generate token
-  const token = crypto.randomBytes(32).toString("hex");
-
-  user.resetToken = token;
-  user.resetTokenExpiry = Date.now() + 15 * 60 * 1000; // 15 mins
-
-  await user.save();
-
-  // send email
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "yourgmail@gmail.com",
-      pass: "your_app_password"
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-  });
 
-  const resetLink = `http://localhost:5173/reset-password/${token}`;
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetToken = token;
+    user.resetTokenExpiry = Date.now() + 15 * 60 * 1000; // 15 mins
+    await user.save();
 
-  await transporter.sendMail({
-    to: user.email,
-    subject: "Password Reset",
-    html: `<p>Click below to reset password:</p>
-           <a href="${resetLink}">${resetLink}</a>`
-  });
+    // NOTE: Configure nodemailer with real credentials before using in production
+    console.log(`[Forgot Password] Reset token for ${email}: ${token}`);
+    res.json({ message: 'Reset link sent to email' });
 
-  res.json({ message: "Reset link sent to email" });
-});
-});
-
-// 👉 Reset Password API
-app.post("/api/reset-password/:token", async (req, res) => {
-  // code here
-  const bcrypt = require("bcryptjs");
-
-app.post("/api/reset-password/:token", async (req, res) => {
-  const { token } = req.params;
-  const { newPassword } = req.body;
-
-  const user = await User.findOne({
-    resetToken: token,
-    resetTokenExpiry: { $gt: Date.now() }
-  });
-
-  if (!user) {
-    return res.status(400).json({ message: "Invalid or expired token" });
+  } catch (err) {
+    console.error('[Forgot Password] Error:', err);
+    res.status(500).json({ message: 'Server error' });
   }
-
-  // hash new password
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-  user.password = hashedPassword;
-  user.resetToken = null;
-  user.resetTokenExpiry = null;
-
-  await user.save();
-
-  res.json({ message: "Password updated successfully" });
 });
+
+// ─── Reset Password ──────────────────────────────────────────
+app.post('/api/reset-password/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.resetToken = null;
+    user.resetTokenExpiry = null;
+    await user.save();
+
+    res.json({ message: 'Password updated successfully' });
+
+  } catch (err) {
+    console.error('[Reset Password] Error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 // ================= REGISTER ROUTE =================

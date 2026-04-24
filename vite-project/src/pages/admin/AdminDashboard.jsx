@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { 
   Row, Col, Table, Card, Badge, Form, Button, 
@@ -14,6 +14,7 @@ import OrdersView from './OrdersView';
 import ServicesView from './ServicesView';
 import StatusBadge from '../../components/StatusBadge';
 import { MOCK_ORDERS } from '../../data/mockOrders';
+import { getProjects } from '../../api/projectApi';
 
 // --- 1. MOCK DATABASE ---
 const INITIAL_SERVICES = [
@@ -66,6 +67,7 @@ const Dashboard = ({ user, onLogout }) => {
   
   // Data State
   const [orders, setOrders] = useState(MOCK_ORDERS);
+  const [projectsLoading, setProjectsLoading] = useState(false);
   const [services, setServices] = useState(INITIAL_SERVICES);
   const [studios, setStudios] = useState(INITIAL_STUDIOS);
   
@@ -82,6 +84,81 @@ const Dashboard = ({ user, onLogout }) => {
 
   // Dynamic Date Generator
   const todayDate = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+  // ── Fetch live projects from MongoDB and merge into orders ──
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setProjectsLoading(true);
+      console.log('[AdminDashboard] ⏳ Fetching projects from API...');
+      try {
+        const res = await getProjects();
+        console.log('[AdminDashboard] ✅ API Response:', res);
+        console.log('[AdminDashboard] 📦 res.data:', res.data);
+
+        // Guard: ensure the response is an array
+        if (!Array.isArray(res.data)) {
+          console.error('[AdminDashboard] ❌ Expected an array but got:', typeof res.data, res.data);
+          return;
+        }
+
+        if (res.data.length === 0) {
+          console.warn('[AdminDashboard] ⚠️ API returned an empty array. No projects in MongoDB yet.');
+          return;
+        }
+
+        // Map MongoDB Project documents → order shape used by the UI
+        const mappedOrders = res.data.map((project) => {
+          console.log('[AdminDashboard] 🔄 Mapping project:', project);
+          // Normalise status: "pending" → "New", otherwise capitalise
+          const statusMap = {
+            pending: 'New',
+            confirmed: 'Confirmed',
+            completed: 'Completed',
+            cancelled: 'Cancelled',
+          };
+          const rawStatus = (project.status || 'pending').toLowerCase();
+          const mappedStatus = statusMap[rawStatus] || 'New';
+
+          return {
+            id: project._id,                          // MongoDB ObjectId string
+            date: project.date
+              ? new Date(project.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+              : new Date(project.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+            time: '',
+            client: project.client || 'Unknown Client',
+            email: '',
+            amount: 0,
+            status: mappedStatus,
+            location: project.type || 'N/A',          // use shoot type as location proxy
+            phone: '',
+            service: project.title || 'Photography Project',
+          };
+        });
+
+        console.log('[AdminDashboard] 🗂️ Mapped orders from API:', mappedOrders);
+
+        // Prepend live DB orders; keep MOCK_ORDERS at the end as fallback
+        setOrders([...mappedOrders, ...MOCK_ORDERS]);
+        console.log('[AdminDashboard] 🎉 setOrders called — state will re-render.');
+
+      } catch (err) {
+        console.error('[AdminDashboard] 🔥 API call failed!', err);
+        if (err.response) {
+          // Server responded with a non-2xx status
+          console.error('[AdminDashboard] 📡 Status:', err.response.status, '| Data:', err.response.data);
+        } else if (err.request) {
+          // Request was sent but no response (CORS / network / server down)
+          console.error('[AdminDashboard] 🚫 No response received. Is the backend running on port 5000? CORS issue?', err.request);
+        } else {
+          console.error('[AdminDashboard] ⚙️ Axios setup error:', err.message);
+        }
+      } finally {
+        setProjectsLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []); // runs once on mount
 
   // Handlers
   const toggleMenu = (key) => setOpenMenus(prev => ({ ...prev, [key]: !prev[key] }));

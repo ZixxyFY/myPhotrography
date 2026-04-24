@@ -57,7 +57,7 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick, 
   const [toastVisible, setToastVisible] = useState(false);
   const [newsletterDone, setNewsletterDone] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
-  
+
   /* ─── BOOKING WIZARD STATE ─── */
   const [wizardOpen, setWizardOpen] = useState(false);
   const [preSelectedPkg, setPreSelectedPkg] = useState('prestige');
@@ -133,7 +133,7 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick, 
   const handleServiceClick = (serviceName) => {
     setFormData(prev => ({
       ...prev,
-      cMessage: `Hi E-Imagination team,\n\nI am interested in booking a ${serviceName} session. Could you provide more details regarding packages and availability?`
+      cMessage: `Hi E-imagination team,\n\nI am interested in booking a ${serviceName} session. Could you provide more details regarding packages and availability?`
     }));
 
     const contactSection = document.querySelector('#contact');
@@ -306,7 +306,7 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick, 
             country.
           </p>
           <p>
-            Today, E-Imagination is more than a photography studio. We are a
+            Today, E-imagination is more than a photography studio. We are a
             collective of artists, storytellers, and dreamers. With over 150
             weddings and 500+ happy clients, we've learned that the most
             powerful photographs are the ones that make you feel something —
@@ -326,7 +326,7 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick, 
               fontStyle: 'italic',
               marginBottom: '0.25rem'
             }}>
-              — The E-Imagination Team
+              — The E-imagination Team
             </p>
             <p style={{
               fontSize: '0.78rem',
@@ -393,30 +393,30 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick, 
           <div className="lp-team__grid text-start">
             {/* Package 1 */}
             <div className="lp-team__card lp-reveal p-4 d-flex flex-column" ref={addRevealRef} style={{ background: '#1A1A1B', border: '1px solid rgba(197, 160, 89, 0.3)', cursor: 'default' }}>
-               <h4 style={{ fontFamily: "'Playfair Display', serif", color: '#F5F5F7' }}>The Essential</h4>
-               <h2 style={{ color: '#C5A059', margin: '1rem 0' }}>$1,500</h2>
-               {/* FIX: Removed text-muted, added inline color */}
-               <p className="small flex-grow-1 mb-4" style={{ color: '#A0A0A0', lineHeight: '1.6' }}>Perfect for intimate portraits and small events.</p>
-               <button className="lp-btn-ghost w-100" onClick={(e) => { createRipple(e); handleBookPackage('essential'); }}>Book Session</button>
+              <h4 style={{ fontFamily: "'Playfair Display', serif", color: '#F5F5F7' }}>The Essential</h4>
+              <h2 style={{ color: '#C5A059', margin: '1rem 0' }}>$1,500</h2>
+              {/* FIX: Removed text-muted, added inline color */}
+              <p className="small flex-grow-1 mb-4" style={{ color: '#A0A0A0', lineHeight: '1.6' }}>Perfect for intimate portraits and small events.</p>
+              <button className="lp-btn-ghost w-100" onClick={(e) => { createRipple(e); handleBookPackage('essential'); }}>Book Session</button>
             </div>
-            
+
             {/* Package 2 */}
             <div className="lp-team__card lp-reveal p-4 d-flex flex-column" ref={addRevealRef} style={{ background: '#242426', border: '1px solid #C5A059', cursor: 'default' }}>
-               <div className="text-center mb-3"><span style={{ backgroundColor: 'rgba(197, 160, 89, 0.2)', color: '#C5A059', letterSpacing: '1px', padding: '4px 12px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold' }}>MOST POPULAR</span></div>
-               <h4 style={{ fontFamily: "'Playfair Display', serif", color: '#F5F5F7' }}>The Prestige</h4>
-               <h2 style={{ color: '#C5A059', margin: '1rem 0' }}>$3,500</h2>
-               {/* FIX: Removed text-muted, added inline color */}
-               <p className="small flex-grow-1 mb-4" style={{ color: '#A0A0A0', lineHeight: '1.6' }}>Our most popular choice for weddings and large events.</p>
-               <button className="lp-btn-gold w-100" onClick={(e) => { createRipple(e); handleBookPackage('prestige'); }}>Book Session</button>
+              <div className="text-center mb-3"><span style={{ backgroundColor: 'rgba(197, 160, 89, 0.2)', color: '#C5A059', letterSpacing: '1px', padding: '4px 12px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold' }}>MOST POPULAR</span></div>
+              <h4 style={{ fontFamily: "'Playfair Display', serif", color: '#F5F5F7' }}>The Prestige</h4>
+              <h2 style={{ color: '#C5A059', margin: '1rem 0' }}>$3,500</h2>
+              {/* FIX: Removed text-muted, added inline color */}
+              <p className="small flex-grow-1 mb-4" style={{ color: '#A0A0A0', lineHeight: '1.6' }}>Our most popular choice for weddings and large events.</p>
+              <button className="lp-btn-gold w-100" onClick={(e) => { createRipple(e); handleBookPackage('prestige'); }}>Book Session</button>
             </div>
 
             {/* Package 3 */}
             <div className="lp-team__card lp-reveal p-4 d-flex flex-column" ref={addRevealRef} style={{ background: '#1A1A1B', border: '1px solid rgba(197, 160, 89, 0.3)', cursor: 'default' }}>
-               <h4 style={{ fontFamily: "'Playfair Display', serif", color: '#F5F5F7' }}>The Couture</h4>
-               <h2 style={{ color: '#C5A059', margin: '1rem 0' }}>$6,000</h2>
-               {/* FIX: Removed text-muted, added inline color */}
-               <p className="small flex-grow-1 mb-4" style={{ color: '#A0A0A0', lineHeight: '1.6' }}>The ultimate luxury experience for high-end productions.</p>
-               <button className="lp-btn-ghost w-100" onClick={(e) => { createRipple(e); handleBookPackage('couture'); }}>Book Session</button>
+              <h4 style={{ fontFamily: "'Playfair Display', serif", color: '#F5F5F7' }}>The Couture</h4>
+              <h2 style={{ color: '#C5A059', margin: '1rem 0' }}>$6,000</h2>
+              {/* FIX: Removed text-muted, added inline color */}
+              <p className="small flex-grow-1 mb-4" style={{ color: '#A0A0A0', lineHeight: '1.6' }}>The ultimate luxury experience for high-end productions.</p>
+              <button className="lp-btn-ghost w-100" onClick={(e) => { createRipple(e); handleBookPackage('couture'); }}>Book Session</button>
             </div>
           </div>
         </div>
@@ -542,7 +542,7 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick, 
       <footer className="lp-footer">
         <div className="lp-footer__grid">
           <div>
-            <div className="lp-footer__brand">E-Imagination</div>
+            <div className="lp-footer__brand">E-imagination</div>
             <p className="lp-footer__brand-text">
               Capturing moments that last a lifetime. Professional photography
               for all occasions — weddings, events, portraits, and fashion.
@@ -582,18 +582,18 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick, 
             <h4 className="lp-footer__heading">Query For</h4>
             <ul className="lp-footer__links">
               {[
-                'Wedding Photography', 
-                'Event Photography', 
-                'Fashion Photography', 
+                'Wedding Photography',
+                'Event Photography',
+                'Fashion Photography',
                 'Portrait Photography'
               ].map((service) => (
                 <li key={service}>
-                  <button 
-                    className="lp-footer__link" 
-                    style={{ 
-                      background: 'none', 
-                      border: 'none', 
-                      padding: 0, 
+                  <button
+                    className="lp-footer__link"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
                       cursor: 'pointer',
                       textAlign: 'left'
                     }}
@@ -668,10 +668,10 @@ const Landing = ({ user, onLogout, onLoginClick, onShopClick, onDashboardClick, 
       </footer>
 
       {/* Render the Wizard */}
-      <BookingWizard 
-        show={wizardOpen} 
-        onHide={() => setWizardOpen(false)} 
-        initialPackage={preSelectedPkg} 
+      <BookingWizard
+        show={wizardOpen}
+        onHide={() => setWizardOpen(false)}
+        initialPackage={preSelectedPkg}
       />
 
     </div>

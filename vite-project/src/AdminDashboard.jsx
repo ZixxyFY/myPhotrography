@@ -283,7 +283,7 @@ const FullPhotographyAdmin = () => {
       <div className="d-none d-lg-block sticky-top" style={{ width: '280px', height: '100vh', overflowY: 'auto', backgroundColor: 'rgba(26, 26, 27, 0.8)', backdropFilter: 'blur(10px)', borderRight: '1px solid rgba(197, 160, 89, 0.1)' }}>
         <div className="p-4 mb-2">
           <h4 className="fw-bold d-flex align-items-center gap-2" style={{ letterSpacing: '-0.5px', fontFamily: "'Playfair Display', serif", color: '#C5A059' }}>
-            <Camera size={28} /> LensDash
+            <Camera size={28} /> E-imagination
           </h4>
         </div>
         

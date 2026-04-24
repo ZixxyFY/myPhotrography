@@ -582,7 +582,7 @@ const removeProject = async (id) => {
       <div className="border-end d-none d-lg-block sticky-top" style={{ width: '280px', height: '100vh', overflowY: 'auto', backgroundColor: '#1A1A1B', borderColor: 'rgba(255,255,255,0.05) !important' }}>
         <div className="p-4 mb-2">
           <h4 className="fw-bold d-flex align-items-center gap-2 text-white" style={{ letterSpacing: '-0.5px', ...styles.fontHeader }}>
-            <Camera size={28} color={styles.gold} /> LensDash
+            <Camera size={28} color={styles.gold} /> E-imagination
           </h4>
         </div>
 
